@@ -908,7 +908,7 @@ d) Would your conclusion change if we used a two-sided test? Explain.</div>
 
 <!-- EXPORT BAR -->
 <div class="export-bar">
-  <button class="export-btn" onclick="exportAnswers()">Export My Answers to Claude</button>
+  <button class="export-btn" onclick="exportAnswers()">📋 Copy Answers for AI Review</button>
   <div class="progress-bar" id="progress"></div>
   <div id="export-result"></div>
 </div>
@@ -936,13 +936,26 @@ areas.forEach(a => a.addEventListener('input', autoSave));
 autoLoad();
 
 function exportAnswers() {
-  let r = { module: "Module 4 — Confidence Intervals & Hypothesis Testing", timestamp: new Date().toISOString(), answers: {} };
-  areas.forEach(a => { let v = a.value.trim(); if (v) r.answers[a.getAttribute('data-id')] = v; });
-  let j = JSON.stringify(r, null, 2);
-  navigator.clipboard.writeText(j).then(() => {
-    document.getElementById('export-result').style.display = 'block';
-    document.getElementById('export-result').textContent = `Copied ${Object.keys(r.answers).length} answers! Paste to Claude with Cmd+V.`;
+  const exercises = document.querySelectorAll(".exercise");
+  let parts = [];
+  exercises.forEach(ex => {
+    const titleEl = ex.querySelector(".exercise-title");
+    const title = titleEl ? titleEl.textContent.trim() : "Exercise";
+    const textEl = ex.querySelector(".exercise-text");
+    const question = textEl ? textEl.textContent.trim().substring(0, 500) : "";
+    const localAreas = ex.querySelectorAll(".answer-area");
+    let answers = [];
+    localAreas.forEach(a => {
+      const v = a.value.trim();
+      const prev = a.previousElementSibling;
+      const sub = (prev && prev.classList.contains("sub-label")) ? prev.textContent.trim() + " " : "";
+      if (v) answers.push(sub + v);
+    });
+    if (answers.length > 0) parts.push("### " + title + "\n**Question:** " + question + "\n**My Answer:**\n" + answers.join("\n"));
   });
+  if (parts.length === 0) { document.getElementById("export-result").style.display = "block"; document.getElementById("export-result").textContent = "No answers yet!"; return; }
+  const prompt = "You are a statistics tutor reviewing a student\u2019s answers from \"Module 4 — Confidence Intervals & Hypothesis Testing\". For each answer:\n\n1. Say if it is CORRECT, PARTIALLY CORRECT, or INCORRECT\n2. If wrong, explain the mistake clearly and show the correct solution step by step\n3. If correct, confirm and add a quick exam tip if relevant\n4. At the end, give an overall score (e.g. 5/7) and list the topics to review\n\nBe encouraging but precise.\n\n---\n\n" + parts.join("\n\n---\n\n");
+  navigator.clipboard.writeText(prompt).then(() => { document.getElementById("export-result").style.display = "block"; document.getElementById("export-result").textContent = "\u2705 " + parts.length + " answers copied with AI review prompt! Paste into ChatGPT, Claude, or any AI."; });
 }
 </script>
 
