@@ -1,0 +1,270 @@
+---
+title: "Risk factors associated with low infant birth weight"
+format: 
+  html:
+    embed-resources: true
+---
+
+The data was collected at Baystate Medical Center in Springfield in 1986. The dataset includes information about the birth weight of 189 babies and potential risk factors for low birth weight. The goal is to identify risk factors that can help predict the likelihood of low birth weight.
+
+
+::: {.callout-note appearance="simple" icon=false}
+
+
+::: {.remark} 
+Begin by rendering the Quarto file to verify that an HTML file can be created. Ensure that the option `embed-resources: true` in the YAML header remains unchanged.
+
+```
+format: 
+  html:
+    embed-resources: true
+```
+
+Otherwise, the HTML file uploaded to Moodle may be incomplete and could lack essential components such as figures.
+
+Proceed through each exercise sequentially. Upon completion of an exercise, remove the `eval: false` code chunk option if present. Otherwise, the code will not be evaluated, and the results will not appear in the HTML output. Replace all placeholders (___) with the appropriate text or code.
+Generate the HTML output after completing each exercise to verify that results are rendered correctly. This remark may be removed upon finalizing the solution.
+
+:::
+
+
+:::
+
+
+
+
+
+
+
+#### Packages
+
+The `tidyverse` package will be used for data manipulation, visualization, and data import. The dataset is available in the `MASS` package. Additionally, the `tidymodels` package will be required.
+
+Because the `MASS` package contains a `select()` function, loading `MASS` after `tidyverse` would mask the `select()` function from `dplyr`. Therefore, load `MASS` first. 
+
+
+```{r}
+#| label: load-packages
+#| message: false
+library(MASS)
+library(tidyverse)
+library(tidymodels)
+```
+
+
+
+
+
+### Data
+
+The data is stored in the `MASS` package under the name `birthwt`. Refer to the dataset's help page for a description of the variables in `birthwt`.
+
+
+## Solutions
+
+
+
+::: {#sol-1}
+
+```{r}
+#| eval: false
+birthwt <- 
+```
+
+
+:::
+
+
+
+::: {#sol-2}
+
+```{r}
+#| eval: false
+ggplot(birthwt, ___) + 
+  geom____
+
+
+ggplot(birthwt, ___) + 
+  geom____
+
+
+
+ggplot(birthwt, ___) + 
+  geom____
+
+
+
+ggplot(birthwt, ___) + 
+  geom____
+
+
+ggplot(birthwt, ___) + 
+  geom____
+
+ggplot(birthwt, ___) + 
+  geom____
+
+
+ggplot(birthwt, ___) + 
+  geom____
+
+
+```
+
+:::  
+
+
+
+
+::: {#sol-3}
+
+
+```{r}
+#| eval: false
+model_full <- glm( ___ )
+
+model_step <- step( ___ )
+```
+
+:::  
+
+
+
+
+
+
+
+
+::: {#sol-4}
+
+
+```{r}
+#| eval: false
+set.seed(111)
+___ <- initial_split()
+
+train <- 
+test <- 
+```
+
+
+```{r}
+#| eval: false
+model_full_train <- glm( ___ )
+
+model_step_train <- glm( ___ )
+
+
+
+
+```
+
+```{r}
+#| eval: false
+
+test$.pred_full <- ___
+roc_full <- ___
+
+
+test$.pred_step <- ___
+roc_step <- ___
+
+```
+
+
+```{r}
+# plot the roc curves
+
+```
+
+
+:::  
+
+
+
+
+
+::: {#sol-5}
+
+
+```{r}
+# compute the AUC
+
+
+```
+
+
+```{r}
+# determine the optimale threshold
+
+
+```
+
+
+
+:::  
+
+
+
+
+
+
+
+
+::: {#sol-6}
+
+
+
+
+```{r}
+# define a workflow
+
+```
+
+```{r}
+# "fit the full model to the folds" 
+
+```
+
+
+```{r}
+# now fit the step model
+
+```
+
+
+
+```{r}
+# compare both models
+
+```
+
+
+:::  
+
+
+
+
+
+
+
+
+## Submission
+
+Once you are finished with all the exercises, you will submit your final __qmd__ and __HTML__ file to Moodle.
+
+::: callout-warning
+Before you wrap up the assignment, make sure you rendered the document containing all your edits and that you have removed all `eval: false` chunk options.
+
+You must turn in your files to Moodle by the submission deadline to be considered "on time." The system will distribute all submissions for peer review after the deadline, and hence, late submissions can't be handled anymore.
+:::
+
+To submit your assignment:
+
+-   Go to Moodle and click on the Peer-Review Activity _Problem H.11.1 - Risk factors for low birth weight_.
+-   Upload your submission (Quarto and HTML file).
+-   Give your submission a name (required but not important, don't choose your name).
+-   Click _Save_  at the end.
+
+
+

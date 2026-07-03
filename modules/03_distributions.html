@@ -112,8 +112,8 @@
   </ul>
 
   <div class="formula">
-    <span class="label">Binomial PMF</span>
-    P(X = x) = C(n, x) &middot; p<sup>x</sup> &middot; (1 &minus; p)<sup>n &minus; x</sup>
+    <span class="label">Binomial PMF (from cheat sheet)</span>
+    P(X = x) = n! / (x! (n &minus; x)!) &middot; p<sup>x</sup> &middot; (1 &minus; p)<sup>n &minus; x</sup>
   </div>
 
   <div class="formula">
@@ -162,7 +162,7 @@
   </ul>
 
   <div class="formula">
-    <span class="label">Poisson PMF</span>
+    <span class="label">Poisson PMF (from cheat sheet)</span>
     P(X = x) = &lambda;<sup>x</sup> &middot; e<sup>&minus;&lambda;</sup> / x!
   </div>
 
@@ -204,13 +204,13 @@
   <p>The geometric distribution models the <strong>number of trials until the first success</strong>. Each trial is independent with constant success probability p.</p>
 
   <div class="formula">
-    <span class="label">Geometric PMF</span>
-    P(X = x) = (1 &minus; p)<sup>x &minus; 1</sup> &middot; p &nbsp;&nbsp;&nbsp; for x = 1, 2, 3, ...
+    <span class="label">Geometric PMF (from cheat sheet)</span>
+    P(X = x) = (1 &minus; p)<sup>x &minus; 1</sup> &middot; p &nbsp;&nbsp;&nbsp; for x &isin; &#8469; (i.e., x = 1, 2, 3, ...)
   </div>
 
   <div class="formula">
-    <span class="label">Expected Value &amp; Variance</span>
-    E(X) = 1/p &nbsp;&nbsp;&nbsp;&nbsp; Var(X) = (1 &minus; p) / p<sup>2</sup>
+    <span class="label">Expected Value &amp; Standard Deviation</span>
+    E(X) = 1/p &nbsp;&nbsp;&nbsp;&nbsp; SD(X) = &radic;((1 &minus; p) / p<sup>2</sup>)
   </div>
 
   <div class="example-box">
@@ -236,11 +236,18 @@
 <div class="lesson">
   <span class="lesson-tag tag-concept">Concept</span>
   <h2>4. Negative Binomial Distribution</h2>
-  <p>The negative binomial generalizes the geometric: it models the <strong>number of trials until the k-th success</strong>.</p>
+  <p>The negative binomial generalizes the geometric: it models the <strong>number of trials until the k-th success</strong>. Like the geometric, each trial is independent with constant success probability p.</p>
+
+  <h3>Intuition</h3>
+  <p>Think of it this way: you keep running independent Bernoulli trials (each with success probability p) and you stop as soon as you have accumulated k successes. X counts the <em>total</em> number of trials needed.</p>
 
   <div class="formula">
-    <span class="label">Negative Binomial PMF</span>
-    P(X = x) = C(x &minus; 1, k &minus; 1) &middot; p<sup>k</sup> &middot; (1 &minus; p)<sup>x &minus; k</sup> &nbsp;&nbsp;&nbsp; for x = k, k+1, k+2, ...
+    <span class="label">Negative Binomial PMF (from cheat sheet)</span>
+    P(X = x) = (x &minus; 1)! / ((k &minus; 1)! (x &minus; k)!) &middot; p<sup>k</sup> &middot; (1 &minus; p)<sup>x &minus; k</sup> &nbsp;&nbsp;&nbsp; for x &ge; k
+  </div>
+
+  <div class="highlight">
+    <strong>Reading the formula:</strong> The combinatorial term C(x&minus;1, k&minus;1) = (x&minus;1)! / ((k&minus;1)!(x&minus;k)!) counts the ways to arrange k&minus;1 successes in the first x&minus;1 trials (the last trial <em>must</em> be the k-th success). Then p<sup>k</sup> accounts for k successes and (1&minus;p)<sup>x&minus;k</sup> for the remaining failures.
   </div>
 
   <div class="formula">
@@ -249,7 +256,7 @@
   </div>
 
   <div class="key-rule">
-    <strong>Relationship:</strong> Geometric is just Negative Binomial with k = 1.
+    <strong>Relationship:</strong> Geometric is just Negative Binomial with k = 1. Setting k = 1 in all the formulas above recovers the geometric distribution exactly.
   </div>
 
   <div class="example-box">
@@ -257,18 +264,110 @@
     <p>A recruiter interviews candidates, and each has a 20% chance of being hired. How many interviews until 3 hires, on average?</p>
     <div class="step-box">
       <div class="step">Calculation</div>
-      E(X) = k/p = 3 / 0.20 = <b>15 interviews</b>
+      E(X) = k/p = 3 / 0.20 = <b>15 interviews</b><br><br>
+      SD(X) = &radic;(k(1&minus;p)/p<sup>2</sup>) = &radic;(3 &middot; 0.8 / 0.04) = &radic;60 = <b>7.75 interviews</b>
     </div>
+  </div>
+
+  <div class="example-box">
+    <div class="label">Worked Example 2 &mdash; Computing a probability</div>
+    <p>What is the probability that the recruiter needs exactly 5 interviews to make 3 hires?</p>
+    <div class="step-box">
+      <div class="step">Calculation</div>
+      x = 5, k = 3, p = 0.2<br>
+      P(X = 5) = C(4, 2) &middot; 0.2<sup>3</sup> &middot; 0.8<sup>2</sup><br>
+      = 6 &middot; 0.008 &middot; 0.64<br>
+      = <b>0.03072</b>
+    </div>
+  </div>
+
+  <div class="danger">
+    <strong>R convention warning:</strong> R's <code>dnbinom(x, size, prob)</code> parameterizes differently &mdash; x counts <em>failures</em> before the k-th success, not total trials. So for the example above: <code>dnbinom(2, size=3, prob=0.2)</code> = 0.03072, where x = 5 &minus; 3 = 2 failures.
   </div>
 </div>
 
 <!-- ════════════════════════════════════════ -->
-<!-- LESSON 5: NORMAL & Z-SCORES            -->
+<!-- LESSON 5: CONTINUOUS DISTRIBUTIONS     -->
 <!-- ════════════════════════════════════════ -->
 
 <div class="lesson">
   <span class="lesson-tag tag-concept">Concept</span>
-  <h2>5. Normal Distribution &amp; Z-Scores</h2>
+  <h2>5. Continuous Distributions &mdash; PDF, CDF &amp; Empirical CDF</h2>
+  <p>For <strong>continuous</strong> random variables, we cannot assign probabilities to individual points. Instead we use <em>density functions</em> and compute probabilities as areas under the curve.</p>
+
+  <h3>5.1 Probability Density Function (PDF)</h3>
+  <p>A function f(x) is a valid PDF if f(x) &ge; 0 for all x and &int; f(x) dx = 1 over the entire domain.</p>
+
+  <div class="formula">
+    <span class="label">Probability from a PDF</span>
+    P(a &le; X &le; b) = &int;<sub>a</sub><sup>b</sup> f(x) dx
+  </div>
+
+  <div class="danger">
+    <strong>Key distinction:</strong> For continuous variables, P(X = x) = 0 for any single value x. Probabilities are always intervals. Consequently, P(a &le; X &le; b) = P(a &lt; X &lt; b) &mdash; including or excluding endpoints makes no difference.
+  </div>
+
+  <h3>5.2 Cumulative Distribution Function (CDF)</h3>
+  <p>The CDF gives the total probability accumulated up to a point x:</p>
+
+  <div class="formula">
+    <span class="label">CDF definition</span>
+    F(x) = P(X &le; x) = &int;<sub>&minus;&infin;</sub><sup>x</sup> f(t) dt
+  </div>
+
+  <div class="key-rule">
+    <strong>Properties of the CDF:</strong><br>
+    &bull; F is non-decreasing: if a &lt; b then F(a) &le; F(b)<br>
+    &bull; F(&minus;&infin;) = 0 and F(&infin;) = 1<br>
+    &bull; P(a &le; X &le; b) = F(b) &minus; F(a)<br>
+    &bull; f(x) = F&prime;(x) &mdash; the PDF is the derivative of the CDF
+  </div>
+
+  <h3>5.3 Empirical CDF (F&#770;<sub>n</sub>)</h3>
+  <p>Given observed data x&#8321;, ..., x&#8345;, the <strong>empirical CDF</strong> is a step function:</p>
+
+  <div class="formula">
+    <span class="label">Empirical CDF</span>
+    F&#770;<sub>n</sub>(x) = (number of observations &le; x) / n
+  </div>
+
+  <div class="highlight">
+    <strong>Exam application (2022):</strong> You may be given a plot of the empirical CDF and asked to read off quantiles or the IQR. To find the IQR from an empirical CDF plot:<br>
+    &bull; Find Q1: the x-value where F&#770;<sub>n</sub>(x) = 0.25<br>
+    &bull; Find Q3: the x-value where F&#770;<sub>n</sub>(x) = 0.75<br>
+    &bull; IQR = Q3 &minus; Q1<br>
+    Read these values by drawing horizontal lines at 0.25 and 0.75 on the y-axis, then dropping down to the x-axis.
+  </div>
+
+  <div class="example-box">
+    <div class="label">Worked Example &mdash; Uniform Distribution</div>
+    <p>X ~ Uniform(0, 5). The PDF is f(x) = 1/5 for 0 &le; x &le; 5.</p>
+    <div class="step-box">
+      <div class="step">Find P(1 &le; X &le; 3)</div>
+      P(1 &le; X &le; 3) = &int;<sub>1</sub><sup>3</sup> (1/5) dx = (3 &minus; 1)/5 = <b>2/5 = 0.4</b>
+    </div>
+    <div class="step-box">
+      <div class="step">CDF</div>
+      F(x) = x/5 for 0 &le; x &le; 5<br>
+      P(1 &le; X &le; 3) = F(3) &minus; F(1) = 3/5 &minus; 1/5 = <b>0.4</b> (same answer)
+    </div>
+  </div>
+
+  <h3>R Functions for Empirical CDF</h3>
+  <div class="key-rule">
+    <strong>ecdf(data)</strong> &mdash; creates the empirical CDF function.<br>
+    <strong>plot(ecdf(data))</strong> &mdash; plots the step-function CDF.<br>
+    <strong>quantile(data, 0.25)</strong> &mdash; extracts quantiles directly.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- LESSON 6: NORMAL & Z-SCORES            -->
+<!-- ════════════════════════════════════════ -->
+
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>6. Normal Distribution &amp; Z-Scores</h2>
   <p>The normal (Gaussian) distribution is the most important continuous distribution. It is symmetric, bell-shaped, and fully described by its mean &mu; and standard deviation &sigma;.</p>
 
   <div class="formula">
@@ -292,6 +391,55 @@
     <strong>dnorm(x, mean, sd)</strong> &mdash; The density (height of curve), NOT a probability.
   </div>
 
+  <h3>Symmetry Property</h3>
+  <div class="key-rule">
+    <strong>P(Z &gt; z) = P(Z &lt; &minus;z)</strong><br>
+    Because the standard normal is symmetric around 0, the area to the right of z equals the area to the left of &minus;z. This means pnorm(&minus;z) = 1 &minus; pnorm(z).
+  </div>
+
+  <h3>Key Quantiles (appear frequently on exams)</h3>
+  <table style="width:100%">
+    <tr>
+      <th>p</th>
+      <th>qnorm(p)</th>
+      <th>Typical use</th>
+    </tr>
+    <tr>
+      <td>0.025</td>
+      <td><b>&minus;1.96</b></td>
+      <td>95% CI lower bound</td>
+    </tr>
+    <tr>
+      <td>0.05</td>
+      <td><b>&minus;1.645</b></td>
+      <td>90% CI lower bound / one-sided &alpha;=0.05</td>
+    </tr>
+    <tr>
+      <td>0.10</td>
+      <td><b>&minus;1.28</b></td>
+      <td>80% CI lower bound / one-sided &alpha;=0.10</td>
+    </tr>
+    <tr>
+      <td>0.90</td>
+      <td><b>1.28</b></td>
+      <td>By symmetry: qnorm(0.90) = &minus;qnorm(0.10)</td>
+    </tr>
+    <tr>
+      <td>0.95</td>
+      <td><b>1.645</b></td>
+      <td>By symmetry: qnorm(0.95) = &minus;qnorm(0.05)</td>
+    </tr>
+    <tr>
+      <td>0.975</td>
+      <td><b>1.96</b></td>
+      <td>95% CI upper bound</td>
+    </tr>
+  </table>
+
+  <div class="danger">
+    <strong>Common exam mistake:</strong> Confusing pnorm and qnorm. Remember: <strong>pnorm takes an x-value and returns a probability</strong>; <strong>qnorm takes a probability and returns an x-value</strong>. They are inverses of each other.
+  </div>
+
   <div class="example-box">
     <div class="label">Worked Example</div>
     <p>What percentage of observations fall within 1.3 standard deviations of the mean?</p>
@@ -310,12 +458,12 @@
 </div>
 
 <!-- ════════════════════════════════════════ -->
-<!-- LESSON 6: CLT                          -->
+<!-- LESSON 7: CLT                          -->
 <!-- ════════════════════════════════════════ -->
 
 <div class="lesson">
   <span class="lesson-tag tag-concept">Concept</span>
-  <h2>6. Central Limit Theorem (CLT)</h2>
+  <h2>7. Central Limit Theorem (CLT)</h2>
   <p>The CLT is arguably the <strong>most important theorem in statistics</strong>. It says that the sampling distribution of the sample mean approaches a normal distribution as n increases &mdash; <em>regardless of the population's shape</em>.</p>
 
   <div class="formula">
@@ -362,13 +510,53 @@
 </div>
 
 <!-- ════════════════════════════════════════ -->
-<!-- LESSON 7: CHEAT SHEET                  -->
+<!-- LESSON 8: CHEAT SHEET                  -->
 <!-- ════════════════════════════════════════ -->
 
 <div class="lesson">
   <span class="lesson-tag tag-summary">Summary</span>
-  <h2>7. Distribution Cheat Sheet</h2>
+  <h2>8. Distribution Cheat Sheet</h2>
 
+  <h3>Discrete Distributions</h3>
+  <table style="width:100%">
+    <tr>
+      <th>Distribution</th>
+      <th>Use when...</th>
+      <th>E(X)</th>
+      <th>SD(X)</th>
+      <th>R function</th>
+    </tr>
+    <tr>
+      <td><b>Binomial</b></td>
+      <td># successes in n trials</td>
+      <td>np</td>
+      <td>&radic;(np(1&minus;p))</td>
+      <td>dbinom / pbinom</td>
+    </tr>
+    <tr>
+      <td><b>Geometric</b></td>
+      <td>Trials until 1st success</td>
+      <td>1/p</td>
+      <td>&radic;((1&minus;p)/p&sup2;)</td>
+      <td>dgeom / pgeom</td>
+    </tr>
+    <tr>
+      <td><b>Neg. Binomial</b></td>
+      <td>Trials until k-th success</td>
+      <td>k/p</td>
+      <td>&radic;(k(1&minus;p)/p&sup2;)</td>
+      <td>dnbinom / pnbinom</td>
+    </tr>
+    <tr>
+      <td><b>Poisson</b></td>
+      <td># events in fixed interval</td>
+      <td>&lambda;</td>
+      <td>&radic;&lambda;</td>
+      <td>dpois / ppois</td>
+    </tr>
+  </table>
+
+  <h3>Continuous Distributions</h3>
   <table style="width:100%">
     <tr>
       <th>Distribution</th>
@@ -378,39 +566,18 @@
       <th>R function</th>
     </tr>
     <tr>
-      <td><b>Binomial</b></td>
-      <td># successes in n trials</td>
-      <td>np</td>
-      <td>np(1&minus;p)</td>
-      <td>dbinom / pbinom</td>
-    </tr>
-    <tr>
-      <td><b>Poisson</b></td>
-      <td># events in fixed interval</td>
-      <td>&lambda;</td>
-      <td>&lambda;</td>
-      <td>dpois / ppois</td>
-    </tr>
-    <tr>
-      <td><b>Geometric</b></td>
-      <td>Trials until 1st success</td>
-      <td>1/p</td>
-      <td>(1&minus;p)/p<sup>2</sup></td>
-      <td>dgeom / pgeom</td>
-    </tr>
-    <tr>
-      <td><b>Neg. Binomial</b></td>
-      <td>Trials until k-th success</td>
-      <td>k/p</td>
-      <td>k(1&minus;p)/p<sup>2</sup></td>
-      <td>dnbinom / pnbinom</td>
-    </tr>
-    <tr>
       <td><b>Normal</b></td>
       <td>Continuous, symmetric data</td>
       <td>&mu;</td>
       <td>&sigma;<sup>2</sup></td>
-      <td>pnorm / qnorm</td>
+      <td>pnorm / qnorm / dnorm</td>
+    </tr>
+    <tr>
+      <td><b>Uniform(a,b)</b></td>
+      <td>Equal probability over interval</td>
+      <td>(a+b)/2</td>
+      <td>(b&minus;a)<sup>2</sup>/12</td>
+      <td>punif / qunif / dunif</td>
     </tr>
   </table>
 
@@ -420,7 +587,14 @@
     Counting events in an interval? &rarr; <b>Poisson</b><br>
     Waiting for first success? &rarr; <b>Geometric</b><br>
     Waiting for k-th success? &rarr; <b>Negative Binomial</b><br>
-    Continuous &amp; bell-shaped? &rarr; <b>Normal</b>
+    Continuous &amp; bell-shaped? &rarr; <b>Normal</b><br>
+    Continuous &amp; equally likely over a range? &rarr; <b>Uniform</b>
+  </div>
+
+  <div class="key-rule">
+    <strong>PDF vs PMF reminder:</strong><br>
+    &bull; <b>Discrete</b> distributions use a PMF: P(X = x) gives an actual probability.<br>
+    &bull; <b>Continuous</b> distributions use a PDF: f(x) is a density, not a probability. You must integrate to get P(a &le; X &le; b).
   </div>
 </div>
 
@@ -490,14 +664,14 @@ ppois(2, lambda = 4.5)</div>
 <!-- PRACTICE 3 -->
 <div class="exercise">
   <span class="lesson-tag tag-practice">Practice</span>
-  <div class="exercise-title">Exercise 3 — Expected Value: Card Game</div>
+  <div class="exercise-title">Exercise 3 — Expected Value: Card Game (2023 Retake)</div>
   <span class="points">2 pts</span>
   <div class="exercise-text">You draw one card from a standard deck of 52 cards. The payoff rules are:
 
-&bull; Red card (hearts or diamonds): win nothing (0)
-&bull; Spade (not ace): win 5
-&bull; Club (not ace): win 10
-&bull; Ace of clubs: win 40
+&bull; Red card (hearts or diamonds): win nothing ($0)
+&bull; Spade: win $5
+&bull; Club (not the ace of clubs): win $10
+&bull; Ace of clubs: win $40 (total &mdash; NOT $10 + $30)
 
 Find E(X), the expected winnings per draw.</div>
   <textarea class="answer-area" data-id="P3" placeholder="List each outcome, its probability, and its payoff. Then compute E(X) = sum of p*x..." style="min-height:120px"></textarea>
@@ -505,16 +679,18 @@ Find E(X), the expected winnings per draw.</div>
     <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
     <div class="solution-content">
       <b>Outcomes and probabilities:</b><br>
-      &bull; Red card: 26/52 = 1/2, payoff = 0<br>
-      &bull; Spade (13 cards, including ace of spades): 13/52 = 1/4, payoff = 5<br>
-      &bull; Club (not ace): 12/52 = 3/13, payoff = 10<br>
-      &bull; Ace of clubs: 1/52, payoff = 40<br><br>
+      &bull; Red card: 26/52 = 1/2, payoff = $0<br>
+      &bull; Spade (all 13 spades): 13/52 = 1/4, payoff = $5<br>
+      &bull; Club (not ace): 12/52 = 3/13, payoff = $10<br>
+      &bull; Ace of clubs: 1/52, payoff = $40<br><br>
+      <b>Check probabilities sum to 1:</b> 26 + 13 + 12 + 1 = 52<br><br>
       <b>E(X) = &sum; x<sub>i</sub> &middot; P(x<sub>i</sub>):</b><br>
       = 0 &middot; (26/52) + 5 &middot; (13/52) + 10 &middot; (12/52) + 40 &middot; (1/52)<br>
       = 0 + 65/52 + 120/52 + 40/52<br>
       = 225/52<br>
-      = <b>4.327 &asymp; 4.33</b><br><br>
-      On average, you win about <b>&euro;4.33 per draw</b>.
+      = <b>$4.33</b><br><br>
+      Breakdown: 0 + 1.25 + 2.308 + 0.769 = $4.33<br><br>
+      On average, you win about <b>$4.33 per draw</b>.
     </div>
   </div>
 </div>
@@ -603,6 +779,65 @@ pbinom(2, size = 5, prob = 0.342)</div>
       = <b>0.3331</b><br><br>
       In R: <code>dbinom(2, 5, 0.342)</code> = 0.3331<br><br>
       <b>Note:</b> pbinom(2, 5, 0.342) = 0.8060 would give P(X &le; 2), which is the <em>cumulative</em> probability. The question asks for <em>exactly</em> 2, so we use dbinom.
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 7 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 7 — Normal: Using pnorm and qnorm</div>
+  <span class="points">3 pts</span>
+  <div class="exercise-text">Exam scores follow a normal distribution with &mu; = 72 and &sigma; = 8.
+
+a) What proportion of students scored below 60?
+b) What score marks the top 5% of students?
+c) What is the IQR of the exam scores?</div>
+  <div class="hint-box">pnorm(60, mean = 72, sd = 8)
+qnorm(0.95, mean = 72, sd = 8)
+qnorm(0.75, 72, 8) - qnorm(0.25, 72, 8)</div>
+  <textarea class="answer-area" data-id="P7" placeholder="Use pnorm for part (a), qnorm for parts (b) and (c)..." style="min-height:120px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a) P(X &lt; 60):</b><br>
+      Z = (60 &minus; 72) / 8 = &minus;1.5<br>
+      P(X &lt; 60) = pnorm(&minus;1.5) = <b>0.0668</b> &rarr; about 6.7% scored below 60.<br><br>
+      <b>b) Top 5% cutoff:</b><br>
+      We need x such that P(X &le; x) = 0.95<br>
+      x = qnorm(0.95, 72, 8) = 72 + 1.645 &middot; 8 = 72 + 13.16 = <b>85.16</b><br>
+      Students scoring above ~85.2 are in the top 5%.<br><br>
+      <b>c) IQR:</b><br>
+      Q1 = qnorm(0.25, 72, 8) = 72 + (&minus;0.6745) &middot; 8 = 72 &minus; 5.396 = 66.60<br>
+      Q3 = qnorm(0.75, 72, 8) = 72 + 0.6745 &middot; 8 = 72 + 5.396 = 77.40<br>
+      IQR = 77.40 &minus; 66.60 = <b>10.79</b>
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 8 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 8 — Negative Binomial</div>
+  <span class="points">2 pts</span>
+  <div class="exercise-text">A quality inspector checks items on a production line. Each item independently has a 10% chance of being defective.
+
+a) What is the expected number of items inspected until finding the 3rd defective item?
+b) What is the probability that exactly the 8th item inspected is the 3rd defective?</div>
+  <textarea class="answer-area" data-id="P8" placeholder="Identify k and p, then apply Negative Binomial formulas..." style="min-height:120px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>Parameters:</b> k = 3 (3rd defective), p = 0.10<br><br>
+      <b>a) Expected number of inspections:</b><br>
+      E(X) = k/p = 3 / 0.10 = <b>30 items</b><br><br>
+      <b>b) P(X = 8):</b><br>
+      P(X = 8) = C(7, 2) &middot; 0.1<sup>3</sup> &middot; 0.9<sup>5</sup><br>
+      = 21 &middot; 0.001 &middot; 0.59049<br>
+      = <b>0.01240</b><br><br>
+      Reading the formula: in the first 7 items, exactly 2 must be defective (C(7,2) ways), the 8th item is the 3rd defective, and the remaining 5 items are non-defective (0.9<sup>5</sup>).<br><br>
+      In R: <code>dnbinom(5, size=3, prob=0.1)</code> = 0.01240<br>
+      (R counts failures: x = 8 &minus; 3 = 5 failures)
     </div>
   </div>
 </div>

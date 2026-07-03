@@ -1,0 +1,196 @@
+---
+title: "Predictors associated with infant birth weight"
+format: 
+  html:
+    embed-resources: true
+---
+
+
+### Packages
+
+```{r}
+#| eval: false
+#| message: false
+library(tidyverse)
+
+```
+
+
+### Data preprocessing
+
+```{r}
+#| eval: false
+penguins <- penguins |>
+  drop_na() |>
+  mutate(large = factor(if_else(body_mass > mean(body_mass, na.rm = TRUE), 1, 0)))
+```
+
+
+#### a)
+
+
+```{r}
+#| eval: false
+ggplot(penguins, ) +
+
+```
+
+
+
+#### b)
+
+
+The probability that a randomly selected Adelie penguin is large is given by: 
+```{r}
+#| eval: false
+penguins |> 
+  filter(species == "Adelie") |> 
+
+```
+
+
+The odds that a randomly selected Adelie penguin is large is given by: 
+
+```{r}
+#| eval: false
+penguins |> 
+  filter(species == "Adelie") |> 
+
+```
+
+
+
+
+#### c)
+
+We split the data into training and test part by using functions from tidymodels.
+
+```{r}
+#| eval: false
+library(tidymodels)
+set.seed(12345)
+penguins_split <- 
+penguins_train <- 
+penguins_test <- 
+```
+
+
+Now we can fit the model to the training data.
+
+```{r}
+#| eval: false
+
+model_s <- glm(large ~ )
+
+```
+
+
+The predicted odds can be computed using ...
+
+
+```{r}
+#| eval: false
+
+# computing probabilities
+pi_g <- predict(model_s, )
+
+pi_a <- predict(model_s, )
+
+# computing the odds
+
+```
+
+
+#### d)
+
+
+
+
+
+#### e)
+
+
+```{r}
+#| eval: false
+
+model_sf <- 
+  
+
+```
+
+
+
+To compute the change in the odss, we need the estimated slope of `flipper_len`. ...
+
+```{r}
+
+
+```
+
+
+#### f)
+
+
+We compute predictions for the test data
+
+```{r}
+#| eval: false 
+pred_s <- predict(model_s, )
+pred_sf <- predict(model_sf, )
+
+```
+
+Given those predictions, we can compare them with the actually observed values of `large` in the test data. Based on that comparison we can computed the ROC curve using ...
+
+```{r}
+#| eval: false
+roc_s <- 
+roc_sf <- 
+```
+
+
+The two ROC curves are then plotted into one figure with the `ggroc()` function.
+
+```{r}
+#| eval: false
+bind_rows(roc_s, roc_sf, .id = "model") |>
+  group_by(model) |>
+  ggplot(aes(x = 1- specificity, y = sensitivity, color = model)) + 
+  geom_path() +
+  scale_color_brewer(palette = "Set1", name = "model",
+                     labels = c("species", "specie + flipper length"))
+
+```
+
+#### g)
+
+The auc values are:
+
+
+```{r}
+
+```
+
+
+`roc_s` and `roc_sf` contain specificity and sensitivity values for different thresholds. 
+
+
+```{r}
+#| eval: false
+roc_s |> 
+  # Calculate Youden's J for every row in the ROC curve
+  mutate(j_index =  ) |> 
+  # Grab the row where J is maximized
+  ___
+  
+
+roc_sf |> 
+  # Calculate Youden's J for every row in the ROC curve
+  mutate(j_index =  ) |> 
+  # Grab the row where J is maximized
+  ___
+
+```
+
+
+

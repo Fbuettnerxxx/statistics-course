@@ -1,0 +1,245 @@
+---
+title: "Solution to HW problem - Nobel laureates"
+format: 
+  html:
+    embed-resources: true
+---
+
+
+
+### Packages
+
+We'll use the **tidyverse** package in this homework problem.
+Therefore,  let's load this collection of packages by the following command:
+
+```{r}
+#| label: load-packages
+#| message: false
+library(tidyverse)
+```
+
+### Data
+
+The dataset for this assignment can be found as a CSV (_comma separated values_) file in the Moodle folder "Data files, Quarto files and Solutions to previous problem sets". 
+Create a subfolder with the name' data' in the folder where you have saved this file (`starter_nobel_laureates.qmd`) and save the CSV file `nobel-2023.csv` to this subfolder. Then, use the following command to read (using the `read_csv()` function from the `readr` package) in the data.
+
+
+```{r}
+#| label: load-data
+#| message: false
+#| eval: false
+nobel <- read_csv("data/nobel-2023.csv")
+```
+
+
+
+> Don't forget to remove the chunk option `eval: false`. Otherwise, the code will not be evaluated.
+
+
+The variable descriptions are as follows:
+
+- `year`: The year in which the Nobel Prize was awarded
+	
+
+- `category`: The category of the Nobel Prize
+	
+
+- `motivation`: The reason or motivation for awarding the Nobel Prize to the laureate
+	
+
+- `prize_share`: The share of the prize received by the laureate
+	
+
+- `laureate_id`: Unique identifier for the Nobel Laureate
+	
+
+- `full_name`: The full name of the Nobel Laureate
+	
+
+- `gender`: The gender of the laureate (`female`, `male` and `org` for organizations)
+
+- `born_date`: The birth year of the laureate
+	
+- `born_country`: The country where the laureate was born
+	
+- `born_city`: The city where the laureate was born
+	
+
+- `died_date`: The year of death of the laureate (if applicable; `NA` means that the lareate is alive or it was an organization)
+	
+- `died_country`: The country where the laureate died (if applicable)
+	
+- `died_city`: The city where the laureate died (if applicable)
+	
+- `organization_name`: The name of the organization the laureate is associated with
+	
+- `organization_country`: The country where the associated organization is located
+	
+- `organization_city`: The city where the associated organization is located (if applicable)
+
+-----------------------------------------------
+
+
+## Solutions:
+
+
+
+::: {#sol-1}
+
+We can list the number of rows (observations) and columns (variables) with ...
+
+```{r}
+
+```
+
+Each row represents ...
+
+:::
+
+
+
+
+::: {#sol-2}
+
+
+```{r}
+#| label: living
+#| eval: false
+nobel_living <- nobel |>
+  filter(
+    !is.na(organization_country),
+    gender __ "org",
+    ___(died_date)
+  )
+
+
+
+```
+
+
+>  Don't forget to remove the chunk option `eval: false` after replacing the placeholder with the appropriate code. Otherwise, the code will not be evaluated.
+
+:::
+
+
+
+------
+
+First, we'll create a new variable to indicate whether the laureate was in the U.S. when they won their prize. 
+
+
+```{r}
+#| label: living-us
+#| eval: false
+nobel_living <- nobel_living  |> 
+  mutate(
+    country_us = if_else(organization_country == "USA", 
+                         "USA", "Other")
+  )
+```
+
+Next, we will limit our analysis to only the following categories: `physics`, `medicine`, `chemistry`, and `economic`.
+
+```{r}
+#| label: ph-med-chem-eco
+#| eval: false
+nobel_living_science <- nobel_living |>
+  filter(category %in% c("physics", "medicine", "chemistry", "economics"))
+```
+
+
+> Don't forget to remove the chunk option `eval: false`. Otherwise, the code will not be evaluated.
+
+-----
+
+
+::: {#sol-3}
+
+
+```{r} 
+#| label: barplot
+#| eval: false
+ggplot(nobel_living_science, aes(___ = country_us) ) +
+  ___() +
+  facet_wrap( ~ ___)
+```
+
+
+>  Don't forget to remove the chunk option `eval: false` after replacing the placeholder with the appropriate code. Otherwise, the code will not be evaluated.
+
+:::
+
+
+
+
+::: {#sol-4}
+
+
+We start with creating the variable `born_country_us`. 
+
+
+```{r}
+#| label: born-country
+#| eval: false
+nobel_living_science <- nobel_living_science |>
+  mutate(
+    _____ 
+    )
+
+```
+
+Now we can count the number of winners born in US ...
+
+```{r}
+#| label: count-born-us
+#| eval: false
+nobel_living_science |>
+  ___
+```
+
+> Don't forget to remove the chunk option `eval: false` after replacing the placeholder with the appropriate code. Otherwise, the code will not be evaluated.
+
+:::
+
+
+
+::: {#sol-5}
+
+
+```{r}
+#| label: barplot2
+#| eval: false
+ggplot(nobel_living_science, 
+       aes(___ = country_us, ___ = born_country_us) ) +
+  ___() +
+  facet_wrap( ~ ___) +
+  ___
+``` 
+
+> Don't forget to remove the chunk option `eval: false` after replacing the placeholder with the appropriate code. Otherwise, the code will not be evaluated.
+
+In all four categories, ...
+
+:::
+
+
+
+::: {#sol-6}
+
+
+
+> Now you have to add the code chunk on your own.
+
+
+:::
+
+
+
+
+::: {.callout-note icon=false}
+
+After completing your solution, delete this note and any other notes instructing you to remove the `eval: false` chunk option.
+
+:::  
+
+

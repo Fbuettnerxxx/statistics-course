@@ -1,0 +1,325 @@
+---
+title: "Real Estate Prices"
+format: 
+  html:
+    embed-resources: true
+---
+
+
+## Objective
+
+This assignment involves analyzing a real estate dataset to practice fitting, interpreting, and selecting linear regression models.
+
+
+
+::: {.callout-note appearance="simple" icon=false}
+
+
+::: {.remark} 
+Begin by rendering the Quarto file to verify that an HTML file can be created. Ensure that the option `embed-resources: true` in the YAML header remains unchanged.
+
+```
+format: 
+  html:
+    embed-resources: true
+```
+
+Otherwise, the HTML file uploaded to Moodle may be incomplete and could lack essential components such as figures.
+
+Proceed through each exercise sequentially. Upon completion of an exercise, remove the `eval: false` code chunk option if present. Otherwise, the code will not be evaluated and the results will not appear in the HTML output. Replace all placeholders (___) with the appropriate text or code.
+Generate the HTML output after completing each exercise to verify that results are rendered correctly. This remark may be removed upon finalizing the solution.
+
+:::
+
+
+:::  
+
+#### Packages
+
+The **tidyverse** package will be used for data manipulation, visualization, and data import, while the `tidy()` function from the `broom` package will be used for summarizing model outputs. Both packages can be loaded using the following code:
+```{r}
+#| label: load-packages
+#| message: false
+#| eval: false
+library(tidyverse)
+library(broom)
+```
+
+
+
+## Dataset
+
+
+The dataset is provided in the file `real_estate.csv`, which is available on Moodle in the folder *Data files, Quarto files and Solutions to previous problem sets*.
+
+It contains 500 observations of houses with the following variables:
+
+- `price`: House price in thousands of euros.
+
+- `size`: Size of the house in square meters.
+
+- `bedrooms`: Number of bedrooms.
+
+- `bathrooms`: Number of bathrooms.
+
+- `age`: Age of the house in years.
+
+- `location`: Location of the house (categorical: `Urban`, `Suburban`, `Rural`).
+
+- `has_garden`: Whether the house has a garden (`Yes`/`No`).
+
+- `has_garage`: Whether the house has a garage (`Yes`/`No`).
+
+
+
+
+## Solutions
+
+Begin by reading the data. Save the starter file `starter_real_estate.qmd` in a designated folder. Create a subfolder named `data` within this folder to enable reading the `real_estate.csv` file using the following command.
+
+
+
+
+
+```{r}
+#| label: readin-data
+#| message: false
+#| eval: false
+
+real_estate <- read_csv("data/real_estate.csv")
+```
+
+Examine the structure and contents of the dataset.
+
+```{r}
+#| eval: false
+
+real_estate
+```
+
+
+
+
+
+::: {#sol-1}
+
+
+
+The figure indicates the following:
+
+
+
+
+
+```{r}
+#| eval: false
+real_estate |> 
+  ggplot(mapping = aes(___)) +
+  geom_point() + 
+  ___ +
+  labs(
+      ___
+    ) +
+  scale_color_gradient(___) +
+  theme_minimal()
+
+```
+
+___ demonstrates the strongest association with `price` ...
+
+
+:::
+
+
+
+
+::: {#sol-2}
+
+
+```{r}
+#| eval: false
+
+# Fit the model
+model_simple <- 
+  
+# View the fitted model
+tidy(model_simple)
+```
+
+
+...
+
+:::
+
+
+
+::: {#sol-3}
+
+```{r}
+#| eval: false
+
+# Fit the model
+model_multiple <- 
+  
+# View the fitted model
+tidy(model_multiple)
+```
+
+
+...
+
+:::
+
+
+
+
+::: {#sol-4}
+
+`location` can be transformed into a factor variable ...
+
+```{r}
+#| eval: false
+
+real_estate <- real_estate |> 
+  mutate(location = ___)
+```
+
+Since dummy coding is the default ...
+
+```{r}
+#| eval: false
+
+# Fit the model with location
+model_location <- 
+  
+# View the fitted model
+
+```
+
+
+...
+
+:::
+
+
+
+
+::: {#sol-5}
+
+```{r}
+#| eval: false
+
+# Fit the model with binary predictors
+model_binary <- 
+  
+# View the fitted model
+
+```
+
+
+...
+
+:::
+
+
+
+
+::: {#sol-6}
+
+```{r}
+#| eval: false
+# Fit the model with interaction
+model_interaction <- 
+  
+# View the fitted model
+
+
+```
+
+
+...
+
+:::
+
+
+
+
+::: {#sol-7}
+
+```{r}
+#| eval: false
+# Calculate adjusted R-squared for each model
+adj_r2_simple <- summary(model_simple)$___
+
+adj_r2_multiple <- 
+  
+adj_r2_int <- 
+  
+
+```
+
+
+...
+
+
+:::
+
+
+
+
+
+
+::: {#sol-8}
+
+```{r}
+#| eval: false
+
+set.seed(2026)
+n <- nrow(real_estate)
+train_id <- sample(1:n, floor(0.9 * n))  # split 90/10
+train <- real_estate[train_id, ]
+test <- real_estate[-train_id, ]
+```
+
+
+...
+
+```{r}
+#| eval: false
+
+model_multiple_train <- 
+  
+model_int_train <- 
+  
+
+```
+
+
+Given the fitted models from the previous step, we can predict house prices for the new observations contained in `test`. ...
+
+
+```{r}
+#| eval: false
+
+pred_multiple <- 
+  
+pred_int <- 
+  
+```
+
+The root mean squared error can be computed in the following way:
+
+```{r}
+#| eval: false
+
+model_multiple_MSE <- sqrt(mean(___))
+model_int_MSE <- 
+  
+```
+
+...
+
+:::
+
+
+

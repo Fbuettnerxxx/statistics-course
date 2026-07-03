@@ -228,13 +228,13 @@
 <!-- ============================================ -->
 <div class="lesson">
   <span class="lesson-tag tag-example">Worked Example</span>
-  <h2>5. Bayes Step-by-Step — The Parking Lot Problem</h2>
+  <h2>5. Bayes Step-by-Step — The Parking Lot Problem (2023 Exam)</h2>
 
-  <p><em>This exact structure appears in every exam (with different numbers).</em></p>
+  <p><em>This exact structure appears in every exam (with different numbers). These are the 2023 exam numbers.</em></p>
 
   <div class="example-box">
     <div class="label">Problem:</div>
-    A parking lot fills up due to events. Cultural events happen 33% of evenings, sporting events 22%, no events 45%. The lot fills up 21% of the time during cultural events, 75% during sporting events, and 4% when there are no events.<br><br>
+    A parking lot fills up due to events. Cultural events happen 34% of evenings, sporting events 28%, no events 38%. The lot fills up 22% of the time during cultural events, 67% during sporting events, and 11% when there are no events.<br><br>
     <b>Jose finds the lot full. What is the probability there's a sporting event?</b>
   </div>
 
@@ -247,22 +247,22 @@
 
   <div class="step-box">
     <div class="step">Step 2: Write down what you know</div>
-    P(A₁) = 0.22 &nbsp;&nbsp; P(A₂) = 0.33 &nbsp;&nbsp; P(A₃) = 0.45<br>
-    P(B|A₁) = 0.75 &nbsp;&nbsp; P(B|A₂) = 0.21 &nbsp;&nbsp; P(B|A₃) = 0.04
+    P(A₁) = 0.28 &nbsp;&nbsp; P(A₂) = 0.34 &nbsp;&nbsp; P(A₃) = 0.38<br>
+    P(B|A₁) = 0.67 &nbsp;&nbsp; P(B|A₂) = 0.22 &nbsp;&nbsp; P(B|A₃) = 0.11
   </div>
 
   <div class="step-box">
     <div class="step">Step 3: Compute the denominator P(B)</div>
     P(B) = P(B|A₁)&middot;P(A₁) + P(B|A₂)&middot;P(A₂) + P(B|A₃)&middot;P(A₃)<br>
-    P(B) = 0.75&times;0.22 + 0.21&times;0.33 + 0.04&times;0.45<br>
-    P(B) = 0.165 + 0.0693 + 0.018 = <b>0.2523</b>
+    P(B) = 0.67&times;0.28 + 0.22&times;0.34 + 0.11&times;0.38<br>
+    P(B) = 0.1876 + 0.0748 + 0.0418 = <b>0.3042</b>
   </div>
 
   <div class="step-box">
     <div class="step">Step 4: Apply Bayes</div>
     P(A₁ | B) = P(B|A₁)&middot;P(A₁) / P(B)<br>
-    P(A₁ | B) = (0.75 &times; 0.22) / 0.2523<br>
-    P(A₁ | B) = 0.165 / 0.2523 = <b>0.654</b>
+    P(A₁ | B) = (0.67 &times; 0.28) / 0.3042<br>
+    P(A₁ | B) = 0.1876 / 0.3042 = <b>0.617</b>
   </div>
 
   <div class="highlight">
@@ -317,12 +317,134 @@
 
   <p>Multiply each outcome by its probability, then add them all up.</p>
 
+  <div class="formula">
+    <div class="label">Linearity of Expectation (always holds, even if not independent)</div>
+    E(aX + bY) = a&middot;E(X) + b&middot;E(Y)
+  </div>
+
   <div class="example-box">
     <div class="label">Card game example (exam classic):</div>
-    Draw from 52 cards: Red card → win nothing. Spade → win €5. Club → win €10. Ace of clubs → win €40.<br><br>
+    Draw from 52 cards: Red card → win nothing. Spade → win &euro;5. Club → win &euro;10. Ace of clubs → win &euro;40.<br><br>
     Outcomes: 0 (26 cards), 5 (13 cards), 10 (12 clubs minus ace), 40 (1 ace of clubs)<br>
     E(X) = 0&times;(26/52) + 5&times;(13/52) + 10&times;(12/52) + 40&times;(1/52)<br>
-    E(X) = 0 + 1.25 + 2.308 + 0.769 = <b>€4.33</b>
+    E(X) = 0 + 1.25 + 2.308 + 0.769 = <b>&euro;4.33</b>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 8: VARIANCE, SD, AND COVARIANCE -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>8. Variance, Standard Deviation & Covariance of Random Variables</h2>
+
+  <p>Variance measures <b>how spread out</b> the outcomes of a random variable are around its expected value. These formulas are on the exam cheat sheet — you need to know how to apply them.</p>
+
+  <div class="formula">
+    <div class="label">Variance (shortcut formula — use this one)</div>
+    Var(X) = E(X&sup2;) &minus; [E(X)]&sup2;
+  </div>
+
+  <div class="formula">
+    <div class="label">Standard Deviation</div>
+    SD(X) = &radic;Var(X)
+  </div>
+
+  <p>To compute Var(X) with the shortcut formula, you need two things:<br>
+  1. E(X) — compute as usual<br>
+  2. E(X&sup2;) — square each outcome first, then take the expected value: E(X&sup2;) = x₁&sup2;&middot;P(X=x₁) + x₂&sup2;&middot;P(X=x₂) + ...</p>
+
+  <div class="example-box">
+    <div class="label">Example: Die roll game from Exercise 4</div>
+    Outcomes: win &euro;15 (P=1/6), win &euro;5 (P=2/6), lose &euro;3 (P=3/6)<br><br>
+    E(X) = 15(1/6) + 5(2/6) + (&minus;3)(3/6) = 2.50 + 1.667 &minus; 1.50 = <b>2.667</b><br><br>
+    E(X&sup2;) = 15&sup2;(1/6) + 5&sup2;(2/6) + (&minus;3)&sup2;(3/6) = 225(1/6) + 25(2/6) + 9(3/6)<br>
+    E(X&sup2;) = 37.50 + 8.333 + 4.50 = <b>50.333</b><br><br>
+    Var(X) = E(X&sup2;) &minus; [E(X)]&sup2; = 50.333 &minus; (2.667)&sup2; = 50.333 &minus; 7.111 = <b>43.222</b><br>
+    SD(X) = &radic;43.222 = <b>6.574</b>
+  </div>
+
+  <h3>Covariance</h3>
+
+  <div class="formula">
+    <div class="label">Covariance</div>
+    Cov(X, Y) = E(X&middot;Y) &minus; E(X)&middot;E(Y)
+  </div>
+
+  <p>Covariance tells you whether X and Y tend to move together (positive), move oppositely (negative), or have no linear relationship (zero).</p>
+
+  <div class="key-rule">
+    <strong>Key facts about covariance:</strong><br>
+    &bull; If X and Y are <b>independent</b>, then Cov(X,Y) = 0<br>
+    &bull; Cov(X,Y) = 0 does NOT necessarily mean independence (only linear relationship is zero)<br>
+    &bull; Cov(X,X) = Var(X)
+  </div>
+
+  <h3>Variance of Linear Combinations</h3>
+
+  <p>This is the most important variance rule for the exam — it shows up in proofs and calculations.</p>
+
+  <div class="formula">
+    <div class="label">General Rule (always holds)</div>
+    Var(aX + bY) = a&sup2;&middot;Var(X) + b&sup2;&middot;Var(Y) + 2ab&middot;Cov(X, Y)
+  </div>
+
+  <div class="formula">
+    <div class="label">Special Case: If X and Y are independent (Cov = 0)</div>
+    Var(aX + bY) = a&sup2;&middot;Var(X) + b&sup2;&middot;Var(Y)
+  </div>
+
+  <div class="formula">
+    <div class="label">Simplest case: sum of independent variables (a=1, b=1)</div>
+    Var(X + Y) = Var(X) + Var(Y)
+  </div>
+
+  <div class="danger">
+    <strong>Common exam mistakes with variance:</strong><br>
+    &bull; Var(aX) = a&sup2;&middot;Var(X), <b>NOT</b> a&middot;Var(X) — the constant gets <b>squared</b>!<br>
+    &bull; Var(X + c) = Var(X) — adding a constant does NOT change variance<br>
+    &bull; Variance is NEVER negative<br>
+    &bull; Unlike expectation, Var(X+Y) = Var(X)+Var(Y) ONLY works when X,Y are independent
+  </div>
+
+  <div class="highlight">
+    <strong>Preview — Variance of the Sample Mean (covered fully in Module 3):</strong><br>
+    Given n independent random variables X₁,...,Xₙ each with E(X&#7522;)=&mu; and Var(X&#7522;)=&sigma;&sup2;, the sample mean X&#x0304; = (X₁+...+Xₙ)/n has:<br><br>
+    Var(X&#x0304;) = Var((X₁+...+Xₙ)/n) = (1/n)&sup2; &middot; [Var(X₁)+...+Var(Xₙ)] = (1/n&sup2;) &middot; n&sigma;&sup2; = <b>&sigma;&sup2;/n</b><br><br>
+    This uses: (1) variance of linear combination, (2) independence makes Cov terms vanish, (3) each variable has the same variance &sigma;&sup2;. This is why larger samples give more precise estimates.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 9: Z-SCORE -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>9. Z-Score — Standardizing Random Variables</h2>
+
+  <p>The Z-score transforms any random variable into a <b>standardized</b> variable with mean 0 and standard deviation 1. This is the bridge to Module 3 (Normal distribution).</p>
+
+  <div class="formula">
+    <div class="label">Z-Score (Standardization)</div>
+    Z = (X &minus; E(X)) / &radic;Var(X) = (X &minus; &mu;) / &sigma;
+  </div>
+
+  <p><b>What it tells you:</b> how many standard deviations X is away from the mean.</p>
+
+  <div class="example-box">
+    <div class="label">Example:</div>
+    An exam has E(X) = 72 and SD(X) = 8. A student scores 84.<br>
+    Z = (84 &minus; 72) / 8 = 12/8 = <b>1.5</b><br><br>
+    The score is 1.5 standard deviations above the mean.
+  </div>
+
+  <div class="key-rule">
+    <strong>Properties of the standardized variable Z:</strong><br>
+    &bull; E(Z) = 0 (always)<br>
+    &bull; Var(Z) = 1 (always)<br>
+    &bull; Proof: E(Z) = E((X&minus;&mu;)/&sigma;) = (E(X)&minus;&mu;)/&sigma; = 0<br>
+    &bull; Proof: Var(Z) = Var((X&minus;&mu;)/&sigma;) = (1/&sigma;&sup2;)&middot;Var(X) = &sigma;&sup2;/&sigma;&sup2; = 1<br>
+    &bull; If X ~ Normal(&mu;, &sigma;&sup2;), then Z ~ Normal(0, 1) — the <b>standard normal</b> (Module 3)
   </div>
 </div>
 
@@ -340,7 +462,11 @@
     <li>Independent ↔ P(A|B) = P(A) ↔ P(A&cap;B) = P(A)&middot;P(B)</li>
     <li>Bayes: flip the conditional → always 4 steps</li>
     <li>Contingency table: joint = /total, marginal = /row or col total, conditional = /condition total</li>
-    <li>E(X) = sum of (outcome &times; probability)</li>
+    <li>E(X) = sum of (outcome &times; probability); E(aX+bY) = aE(X)+bE(Y)</li>
+    <li>Var(X) = E(X&sup2;) &minus; [E(X)]&sup2;; SD(X) = &radic;Var(X)</li>
+    <li>Cov(X,Y) = E(XY) &minus; E(X)E(Y); independent → Cov = 0</li>
+    <li>Var(aX+bY) = a&sup2;Var(X) + b&sup2;Var(Y) + 2ab&middot;Cov(X,Y)</li>
+    <li>Z-score: Z = (X &minus; &mu;) / &sigma; → standardize to mean 0, SD 1</li>
   </ol>
 </div>
 
@@ -352,14 +478,51 @@
 <!-- PRACTICE 1 -->
 <div class="exercise">
   <span class="lesson-tag tag-practice">Practice</span>
-  <div class="exercise-title">Exercise 1 — Bayes (the big one)</div>
+  <div class="exercise-title">Exercise 1 — Bayes: Parking Lot (2023 Exam Style)</div>
   <span class="points">4 pts &bull; Exam guaranteed</span>
+  <div class="exercise-text">A parking lot fills up due to events. Cultural events happen 34% of evenings, sporting events 28%, no events 38%. The lot fills up 22% of the time during cultural events, 67% during sporting events, and 11% when there are no events.
+
+Jose finds the lot full. What is the probability there's a sporting event?
+
+Show all steps: define events, list probabilities, compute denominator, apply Bayes.</div>
+  <textarea class="answer-area" data-id="P1" placeholder="Step 1: Define events...&#10;Step 2: Given probabilities...&#10;Step 3: Denominator P(B)...&#10;Step 4: Bayes..." style="min-height:200px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>Step 1: Define events</b><br>
+      A₁ = sporting event, A₂ = cultural event, A₃ = no event<br>
+      B = parking lot is full<br>
+      Want: P(A₁ | B)<br><br>
+
+      <b>Step 2: Given probabilities</b><br>
+      P(A₁) = 0.28, P(A₂) = 0.34, P(A₃) = 0.38<br>
+      P(B|A₁) = 0.67, P(B|A₂) = 0.22, P(B|A₃) = 0.11<br><br>
+
+      <b>Step 3: Denominator</b><br>
+      P(B) = P(B|A₁)&middot;P(A₁) + P(B|A₂)&middot;P(A₂) + P(B|A₃)&middot;P(A₃)<br>
+      P(B) = 0.67&times;0.28 + 0.22&times;0.34 + 0.11&times;0.38<br>
+      P(B) = 0.1876 + 0.0748 + 0.0418 = <b>0.3042</b><br><br>
+
+      <b>Step 4: Bayes</b><br>
+      P(A₁|B) = P(B|A₁)&middot;P(A₁) / P(B)<br>
+      P(A₁|B) = 0.1876 / 0.3042 = <b>0.617</b><br><br>
+
+      <b>Interpretation:</b> Even though sporting events only happen 28% of evenings, if the lot is full there's a 61.7% chance it's due to a sporting event — because sporting events fill the lot much more often (67% vs 22% vs 11%).
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 2 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 2 — Bayes: Aptitude Test</div>
+  <span class="points">4 pts &bull; Exam classic</span>
   <div class="exercise-text">A company screens job applicants with an aptitude test. 25% of applicants are actually qualified. The test correctly identifies qualified applicants 88% of the time (sensitivity). It correctly identifies unqualified applicants 82% of the time (specificity).
 
 An applicant tests positive. What is the probability they are actually qualified?
 
 Show all steps: define events, list probabilities, compute denominator, apply Bayes.</div>
-  <textarea class="answer-area" data-id="P1" placeholder="Step 1: Define events...&#10;Step 2: Given probabilities...&#10;Step 3: Denominator P(B)...&#10;Step 4: Bayes..." style="min-height:200px"></textarea>
+  <textarea class="answer-area" data-id="P2" placeholder="Step 1: Define events...&#10;Step 2: Given probabilities...&#10;Step 3: Denominator P(B)...&#10;Step 4: Bayes..." style="min-height:200px"></textarea>
   <div class="solution-wrapper">
     <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
     <div class="solution-content">
@@ -386,10 +549,10 @@ Show all steps: define events, list probabilities, compute denominator, apply Ba
   </div>
 </div>
 
-<!-- PRACTICE 2 -->
+<!-- PRACTICE 3 -->
 <div class="exercise">
   <span class="lesson-tag tag-practice">Practice</span>
-  <div class="exercise-title">Exercise 2 — Contingency Table</div>
+  <div class="exercise-title">Exercise 3 — Contingency Table</div>
   <span class="points">3 pts</span>
   <div class="exercise-text">A survey of 400 students:</div>
   <table>
@@ -403,9 +566,9 @@ a) Is lecture format preference independent of major? Justify by computing and c
 
 b) What is the probability that a randomly selected student who prefers online learning is a STEM student?</div>
   <div class="sub-label">a)</div>
-  <textarea class="answer-area" data-id="P2a" placeholder="Compute conditional probabilities and compare..." style="min-height:120px"></textarea>
+  <textarea class="answer-area" data-id="P3a" placeholder="Compute conditional probabilities and compare..." style="min-height:120px"></textarea>
   <div class="sub-label">b)</div>
-  <textarea class="answer-area" data-id="P2b" placeholder="Your answer..."></textarea>
+  <textarea class="answer-area" data-id="P3b" placeholder="Your answer..."></textarea>
   <div class="solution-wrapper">
     <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
     <div class="solution-content">
@@ -420,10 +583,10 @@ b) What is the probability that a randomly selected student who prefers online l
   </div>
 </div>
 
-<!-- PRACTICE 3 -->
+<!-- PRACTICE 4 -->
 <div class="exercise">
   <span class="lesson-tag tag-practice">Practice</span>
-  <div class="exercise-title">Exercise 3 — Independence Check</div>
+  <div class="exercise-title">Exercise 4 — Independence Check</div>
   <span class="points">2 pts</span>
   <div class="exercise-text">Events A and B satisfy: P(A) = 0.6, P(B) = 0.3, P(A &cap; B) = 0.18.
 
@@ -431,15 +594,15 @@ a) Are A and B independent? Justify mathematically.
 
 b) Compute P(A | B).</div>
   <div class="sub-label">a)</div>
-  <textarea class="answer-area" data-id="P3a" placeholder="Your answer..."></textarea>
+  <textarea class="answer-area" data-id="P4a" placeholder="Your answer..."></textarea>
   <div class="sub-label">b)</div>
-  <textarea class="answer-area" data-id="P3b" placeholder="Your answer..."></textarea>
+  <textarea class="answer-area" data-id="P4b" placeholder="Your answer..."></textarea>
   <div class="solution-wrapper">
     <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
     <div class="solution-content">
       <b>a)</b> Check: P(A) &middot; P(B) = 0.6 &times; 0.3 = 0.18<br>
       Compare with P(A &cap; B) = 0.18<br>
-      Since P(A &cap; B) = P(A)&middot;P(B), A and B <b>are independent</b>. ✓<br><br>
+      Since P(A &cap; B) = P(A)&middot;P(B), A and B <b>are independent</b>.<br><br>
 
       <b>b)</b> P(A | B) = P(A &cap; B) / P(B) = 0.18 / 0.3 = <b>0.6</b><br>
       Note: this equals P(A) = 0.6, which confirms independence (knowing B doesn't change the probability of A).
@@ -447,40 +610,40 @@ b) Compute P(A | B).</div>
   </div>
 </div>
 
-<!-- PRACTICE 4 -->
+<!-- PRACTICE 5 -->
 <div class="exercise">
   <span class="lesson-tag tag-practice">Practice</span>
-  <div class="exercise-title">Exercise 4 — Expected Value</div>
+  <div class="exercise-title">Exercise 5 — Expected Value</div>
   <span class="points">2 pts</span>
-  <div class="exercise-text">A game works as follows: Roll a fair die. If you roll a 6, you win €15. If you roll a 4 or 5, you win €5. For any other number, you lose €3.
+  <div class="exercise-text">A game works as follows: Roll a fair die. If you roll a 6, you win &euro;15. If you roll a 4 or 5, you win &euro;5. For any other number, you lose &euro;3.
 
 a) What is the expected profit/loss per game?
 
 b) If you play 200 games, what are your expected total winnings?</div>
   <div class="sub-label">a)</div>
-  <textarea class="answer-area" data-id="P4a" placeholder="List outcomes, probabilities, then compute E(X)..." style="min-height:120px"></textarea>
+  <textarea class="answer-area" data-id="P5a" placeholder="List outcomes, probabilities, then compute E(X)..." style="min-height:120px"></textarea>
   <div class="sub-label">b)</div>
-  <textarea class="answer-area" data-id="P4b" placeholder="Your answer..."></textarea>
+  <textarea class="answer-area" data-id="P5b" placeholder="Your answer..."></textarea>
   <div class="solution-wrapper">
     <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
     <div class="solution-content">
       <b>a)</b> Outcomes and probabilities:<br>
-      Win €15 (roll 6): P = 1/6<br>
-      Win €5 (roll 4 or 5): P = 2/6<br>
-      Lose €3 (roll 1, 2, or 3): P = 3/6<br><br>
+      Win &euro;15 (roll 6): P = 1/6<br>
+      Win &euro;5 (roll 4 or 5): P = 2/6<br>
+      Lose &euro;3 (roll 1, 2, or 3): P = 3/6<br><br>
       E(X) = 15&times;(1/6) + 5&times;(2/6) + (&minus;3)&times;(3/6)<br>
-      E(X) = 2.50 + 1.667 &minus; 1.50 = <b>€2.667</b><br><br>
-      On average you win about €2.67 per game.<br><br>
+      E(X) = 2.50 + 1.667 &minus; 1.50 = <b>&euro;2.667</b><br><br>
+      On average you win about &euro;2.67 per game.<br><br>
 
-      <b>b)</b> 200 &times; €2.667 = <b>€533.33</b>
+      <b>b)</b> 200 &times; &euro;2.667 = <b>&euro;533.33</b>
     </div>
   </div>
 </div>
 
-<!-- PRACTICE 5 -->
+<!-- PRACTICE 6 -->
 <div class="exercise">
   <span class="lesson-tag tag-practice">Practice</span>
-  <div class="exercise-title">Exercise 5 — Bayes with Twins (Exam Classic)</div>
+  <div class="exercise-title">Exercise 6 — Bayes with Twins (Exam Classic)</div>
   <span class="points">3 pts</span>
   <div class="exercise-text">About 30% of human twins are identical (rest are fraternal). Identical twins are always the same sex — 50% both male, 50% both female. Among fraternal twins: 26% both male, 28% both female, 46% mixed.
 
@@ -488,9 +651,9 @@ a) You learn your newborn twins are both boys. What is the probability they are 
 
 b) Are the events "twins are identical" and "both boys" independent? Justify.</div>
   <div class="sub-label">a)</div>
-  <textarea class="answer-area" data-id="P5a" placeholder="Define events, list probabilities, apply Bayes..." style="min-height:180px"></textarea>
+  <textarea class="answer-area" data-id="P6a" placeholder="Define events, list probabilities, apply Bayes..." style="min-height:180px"></textarea>
   <div class="sub-label">b)</div>
-  <textarea class="answer-area" data-id="P5b" placeholder="Your answer..." style="min-height:80px"></textarea>
+  <textarea class="answer-area" data-id="P6b" placeholder="Your answer..." style="min-height:80px"></textarea>
   <div class="solution-wrapper">
     <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
     <div class="solution-content">
@@ -512,21 +675,99 @@ b) Are the events "twins are identical" and "both boys" independent? Justify.</d
   </div>
 </div>
 
-<!-- PRACTICE 6 -->
+<!-- PRACTICE 7 -->
 <div class="exercise">
   <span class="lesson-tag tag-practice">Practice</span>
-  <div class="exercise-title">Exercise 6 — Addition Rule</div>
+  <div class="exercise-title">Exercise 7 — Addition Rule</div>
   <span class="points">1 pt</span>
   <div class="exercise-text">P(A) = 0.45, P(B) = 0.35, P(A &cap; B) = 0.10.
 
 Compute P(A &cup; B) and P(A<sup>c</sup> &cap; B<sup>c</sup>).</div>
-  <textarea class="answer-area" data-id="P6" placeholder="Your answer..." style="min-height:100px"></textarea>
+  <textarea class="answer-area" data-id="P7" placeholder="Your answer..." style="min-height:100px"></textarea>
   <div class="solution-wrapper">
     <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
     <div class="solution-content">
       P(A &cup; B) = P(A) + P(B) &minus; P(A &cap; B) = 0.45 + 0.35 &minus; 0.10 = <b>0.70</b><br><br>
       P(A<sup>c</sup> &cap; B<sup>c</sup>) = P((A &cup; B)<sup>c</sup>) = 1 &minus; P(A &cup; B) = 1 &minus; 0.70 = <b>0.30</b><br>
       (By De Morgan's law: "neither A nor B" = complement of "A or B")
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 8 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 8 — Variance Computation</div>
+  <span class="points">3 pts &bull; Exam cheat sheet formula</span>
+  <div class="exercise-text">A random variable X has the following probability distribution:
+
+  X:     1      3      5      10
+  P(X):  0.3    0.4    0.2    0.1
+
+a) Compute E(X).
+b) Compute Var(X) using the shortcut formula Var(X) = E(X&sup2;) &minus; [E(X)]&sup2;.
+c) Compute SD(X).</div>
+  <div class="sub-label">a)</div>
+  <textarea class="answer-area" data-id="P8a" placeholder="E(X) = ..." style="min-height:80px"></textarea>
+  <div class="sub-label">b)</div>
+  <textarea class="answer-area" data-id="P8b" placeholder="First compute E(X²), then Var(X) = E(X²) - [E(X)]²..." style="min-height:120px"></textarea>
+  <div class="sub-label">c)</div>
+  <textarea class="answer-area" data-id="P8c" placeholder="SD(X) = ..." style="min-height:60px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a)</b> E(X) = 1(0.3) + 3(0.4) + 5(0.2) + 10(0.1)<br>
+      E(X) = 0.3 + 1.2 + 1.0 + 1.0 = <b>3.5</b><br><br>
+
+      <b>b)</b> First compute E(X&sup2;):<br>
+      E(X&sup2;) = 1&sup2;(0.3) + 3&sup2;(0.4) + 5&sup2;(0.2) + 10&sup2;(0.1)<br>
+      E(X&sup2;) = 1(0.3) + 9(0.4) + 25(0.2) + 100(0.1)<br>
+      E(X&sup2;) = 0.3 + 3.6 + 5.0 + 10.0 = <b>18.9</b><br><br>
+
+      Var(X) = E(X&sup2;) &minus; [E(X)]&sup2; = 18.9 &minus; (3.5)&sup2; = 18.9 &minus; 12.25 = <b>6.65</b><br><br>
+
+      <b>c)</b> SD(X) = &radic;Var(X) = &radic;6.65 = <b>2.579</b>
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 9 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 9 — Variance of Linear Combinations (2023 Exam Proof)</div>
+  <span class="points">3 pts &bull; Proof question</span>
+  <div class="exercise-text">Given n independent random variables X₁, X₂, ..., Xₙ, each with E(X&#7522;) = &mu; and Var(X&#7522;) = &sigma;&sup2;.
+
+The sample mean is defined as: X&#x0304; = (1/n)(X₁ + X₂ + ... + Xₙ)
+
+a) Show that E(X&#x0304;) = &mu;.
+b) Show that Var(X&#x0304;) = &sigma;&sup2;/n.
+
+Hint: Use the rules for expected value of linear combinations and variance of independent variables.</div>
+  <div class="sub-label">a)</div>
+  <textarea class="answer-area" data-id="P9a" placeholder="Use linearity of expectation..." style="min-height:120px"></textarea>
+  <div class="sub-label">b)</div>
+  <textarea class="answer-area" data-id="P9b" placeholder="Use Var(aX) = a²Var(X) and independence..." style="min-height:160px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a) E(X&#x0304;) = &mu;</b><br>
+      E(X&#x0304;) = E[(1/n)(X₁ + X₂ + ... + Xₙ)]<br>
+      = (1/n) &middot; E(X₁ + X₂ + ... + Xₙ) &nbsp;&nbsp;&nbsp; (constant factor comes out)<br>
+      = (1/n) &middot; [E(X₁) + E(X₂) + ... + E(Xₙ)] &nbsp;&nbsp;&nbsp; (linearity of expectation)<br>
+      = (1/n) &middot; [&mu; + &mu; + ... + &mu;] &nbsp;&nbsp;&nbsp; (each E(X&#7522;) = &mu;)<br>
+      = (1/n) &middot; n&mu;<br>
+      = <b>&mu;</b><br><br>
+
+      <b>b) Var(X&#x0304;) = &sigma;&sup2;/n</b><br>
+      Var(X&#x0304;) = Var[(1/n)(X₁ + X₂ + ... + Xₙ)]<br>
+      = (1/n)&sup2; &middot; Var(X₁ + X₂ + ... + Xₙ) &nbsp;&nbsp;&nbsp; (Var(aX) = a&sup2;Var(X))<br>
+      = (1/n&sup2;) &middot; [Var(X₁) + Var(X₂) + ... + Var(Xₙ)] &nbsp;&nbsp;&nbsp; (independence: covariance terms = 0)<br>
+      = (1/n&sup2;) &middot; [&sigma;&sup2; + &sigma;&sup2; + ... + &sigma;&sup2;] &nbsp;&nbsp;&nbsp; (each Var(X&#7522;) = &sigma;&sup2;)<br>
+      = (1/n&sup2;) &middot; n&sigma;&sup2;<br>
+      = <b>&sigma;&sup2;/n</b><br><br>
+
+      <b>Key insight:</b> As sample size n grows, Var(X&#x0304;) shrinks → the sample mean becomes a more precise estimator of &mu;. This is why larger samples are better!
     </div>
   </div>
 </div>

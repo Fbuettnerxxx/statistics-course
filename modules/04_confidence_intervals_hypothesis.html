@@ -82,6 +82,13 @@
 
   .section-divider { text-align: center; margin: 35px 0 25px; font-size: 13px; color: #aab7c4; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
   .section-divider::before, .section-divider::after { content: ''; display: inline-block; width: 40px; height: 1px; background: #d5dbdb; vertical-align: middle; margin: 0 12px; }
+
+  .code-block { background: #2d2d2d; color: #f8f8f2; border-radius: 8px; padding: 14px 18px; margin: 12px 0; font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; font-size: 13px; white-space: pre; overflow-x: auto; line-height: 1.5; }
+  .code-block .comment { color: #75715e; }
+  .code-block .func { color: #66d9ef; }
+  .code-block .string { color: #e6db74; }
+  .code-block .number { color: #ae81ff; }
+  .code-block .pipe { color: #f92672; }
 </style>
 </head>
 <body>
@@ -170,11 +177,108 @@
 </div>
 
 <!-- ============================================ -->
-<!-- LESSON 3: HYPOTHESIS TESTING FRAMEWORK -->
+<!-- LESSON 3: BOOTSTRAP CONFIDENCE INTERVALS -->
 <!-- ============================================ -->
 <div class="lesson">
   <span class="lesson-tag tag-concept">Concept</span>
-  <h2>3. Hypothesis Testing Framework</h2>
+  <h2>3. Bootstrap Confidence Intervals</h2>
+
+  <p>Bootstrapping is a <b>simulation-based</b> approach to constructing confidence intervals. Instead of relying on formulas and distributional assumptions (normality, known form of SE), you let the data itself tell you about sampling variability.</p>
+
+  <h3>What is Bootstrapping?</h3>
+  <ol>
+    <li><b>Start</b> with your original sample of size n.</li>
+    <li><b>Resample with replacement</b> from the original sample to create a new sample of the same size n.</li>
+    <li><b>Compute the statistic</b> (e.g. mean, proportion) on the resampled data.</li>
+    <li><b>Repeat</b> many times (typically 1,000&ndash;15,000 times) to build a <b>bootstrap distribution</b>.</li>
+  </ol>
+
+  <div class="key-rule">
+    <strong>Key idea:</strong> The bootstrap distribution approximates the <b>sampling distribution</b> of the statistic. The spread of the bootstrap distribution estimates the standard error.
+  </div>
+
+  <h3>Method 1: Bootstrap SE Method</h3>
+  <div class="formula">
+    <div class="label">Bootstrap SE Confidence Interval</div>
+    x&#772; &plusmn; z* &middot; SE<sub>bootstrap</sub>
+  </div>
+  <p>where SE<sub>bootstrap</sub> = standard deviation of the bootstrap distribution (i.e. the SD of all the resampled statistics).</p>
+
+  <h3>Method 2: Percentile Method</h3>
+  <p>Use the <b>quantiles of the bootstrap distribution directly</b> as CI bounds:</p>
+  <div class="formula">
+    <div class="label">Percentile Bootstrap CI (95%)</div>
+    (2.5th percentile of bootstrap stats, &nbsp; 97.5th percentile of bootstrap stats)
+  </div>
+
+  <div class="highlight">
+    <strong>When to use which method?</strong><br>
+    &bull; <b>SE method:</b> works well when the bootstrap distribution is approximately symmetric/normal.<br>
+    &bull; <b>Percentile method:</b> more robust, works even when the bootstrap distribution is skewed. This is the default in most modern statistics courses.
+  </div>
+
+  <h3>The <code>infer</code> Workflow for Bootstrap CI</h3>
+  <p>The <code>infer</code> package in R provides a tidy, pipeable workflow for bootstrap inference. This is the workflow tested on TUM exams:</p>
+
+  <div class="code-block"><span class="comment"># Step 1: Generate the bootstrap distribution</span>
+boot_dist <span class="pipe">&lt;-</span> data <span class="pipe">|&gt;</span>
+  <span class="func">specify</span>(response <span class="pipe">=</span> var) <span class="pipe">|&gt;</span>
+  <span class="func">generate</span>(reps <span class="pipe">=</span> <span class="number">1000</span>, type <span class="pipe">=</span> <span class="string">"bootstrap"</span>) <span class="pipe">|&gt;</span>
+  <span class="func">calculate</span>(stat <span class="pipe">=</span> <span class="string">"mean"</span>)
+
+<span class="comment"># Step 2: Get the CI (percentile method)</span>
+boot_dist <span class="pipe">|&gt;</span>
+  <span class="func">get_ci</span>(level <span class="pipe">=</span> <span class="number">0.95</span>, type <span class="pipe">=</span> <span class="string">"percentile"</span>)
+
+<span class="comment"># Or: SE method</span>
+boot_dist <span class="pipe">|&gt;</span>
+  <span class="func">get_ci</span>(level <span class="pipe">=</span> <span class="number">0.95</span>, type <span class="pipe">=</span> <span class="string">"se"</span>,
+         point_estimate <span class="pipe">=</span> <span class="func">mean</span>(data$var))</div>
+
+  <div class="key-rule">
+    <strong>The 4 verbs of <code>infer</code> (exam essential):</strong><br>
+    1. <code>specify()</code> &mdash; declare the response variable (and explanatory variable if applicable)<br>
+    2. <code>hypothesize()</code> &mdash; state the null hypothesis (only for hypothesis tests, NOT for bootstrap CI)<br>
+    3. <code>generate()</code> &mdash; create resamples (<code>type = "bootstrap"</code> for CI, <code>"draw"</code> or <code>"permute"</code> for tests)<br>
+    4. <code>calculate()</code> &mdash; compute the statistic on each resample
+  </div>
+
+  <h3>For Proportions</h3>
+  <p>When bootstrapping a proportion, specify the variable as a factor and declare which level counts as "success":</p>
+  <div class="code-block"><span class="comment"># Bootstrap CI for a proportion</span>
+boot_dist <span class="pipe">&lt;-</span> data <span class="pipe">|&gt;</span>
+  <span class="func">specify</span>(response <span class="pipe">=</span> outcome, success <span class="pipe">=</span> <span class="string">"yes"</span>) <span class="pipe">|&gt;</span>
+  <span class="func">generate</span>(reps <span class="pipe">=</span> <span class="number">1000</span>, type <span class="pipe">=</span> <span class="string">"bootstrap"</span>) <span class="pipe">|&gt;</span>
+  <span class="func">calculate</span>(stat <span class="pipe">=</span> <span class="string">"prop"</span>)</div>
+
+  <div class="example-box">
+    <div class="label">Example: Emergency expense survey</div>
+    A survey of 840 adults finds that 268 cannot cover a $400 emergency expense.<br><br>
+    <b>Observed proportion:</b> p&#770; = 268 / 840 = 0.319<br><br>
+    <b>Bootstrap approach:</b><br>
+    1. Resample 840 adults (with replacement) from the original 840 responses.<br>
+    2. Compute the proportion who cannot cover the expense in each resample.<br>
+    3. Repeat 1,000 times &rarr; get 1,000 bootstrap proportions.<br>
+    4. The middle 95% of these proportions forms the 95% CI.<br><br>
+    <b>Suppose the bootstrap gives:</b> SE<sub>boot</sub> = 0.0161<br>
+    SE method: 0.319 &plusmn; 1.96 &times; 0.0161 = <b>(0.288, 0.351)</b><br><br>
+    <b>Compare to the formula-based CI:</b><br>
+    SE = &radic;(0.319 &times; 0.681 / 840) = &radic;(0.000259) = 0.0161<br>
+    CI = 0.319 &plusmn; 1.96 &times; 0.0161 = <b>(0.288, 0.351)</b><br><br>
+    In this case, the bootstrap and formula results are nearly identical because the sample is large and the distribution is symmetric. The bootstrap shines when conditions for the formula are not met.
+  </div>
+
+  <div class="danger">
+    <strong>Exam trap:</strong> Do NOT confuse <code>generate(type = "bootstrap")</code> (used for confidence intervals) with <code>generate(type = "draw")</code> or <code>generate(type = "permute")</code> (used for hypothesis tests). The exam will ask you to fill in the blanks and choosing the wrong <code>type</code> is a common mistake.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 4: HYPOTHESIS TESTING FRAMEWORK -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>4. Hypothesis Testing Framework</h2>
 
   <p>Hypothesis testing is a formal procedure to decide whether data provides enough evidence against a <b>null hypothesis</b>.</p>
 
@@ -228,11 +332,11 @@
 </div>
 
 <!-- ============================================ -->
-<!-- LESSON 4: T-TEST FOR MEANS -->
+<!-- LESSON 5: T-TEST FOR MEANS -->
 <!-- ============================================ -->
 <div class="lesson">
   <span class="lesson-tag tag-concept">Concept</span>
-  <h2>4. t-Test for Means</h2>
+  <h2>5. t-Test for Means</h2>
 
   <h3>One-Sample t-Test</h3>
   <div class="formula">
@@ -285,11 +389,11 @@
 </div>
 
 <!-- ============================================ -->
-<!-- LESSON 5: PROPORTION TESTS (Z-TEST) -->
+<!-- LESSON 6: PROPORTION TESTS (Z-TEST) -->
 <!-- ============================================ -->
 <div class="lesson">
   <span class="lesson-tag tag-concept">Concept</span>
-  <h2>5. Proportion Tests (Z-test)</h2>
+  <h2>6. Proportion Tests (Z-test)</h2>
 
   <h3>One-Proportion Z-Test</h3>
   <div class="formula">
@@ -297,13 +401,23 @@
     Z = (p&#770; &minus; p&#8320;) / SE&#8320; &nbsp;&nbsp;&nbsp; where &nbsp;&nbsp;&nbsp; SE&#8320; = &radic;(p&#8320;(1 &minus; p&#8320;) / n)
   </div>
 
-  <p>Note: for the <b>test</b>, use p&#8320; (the hypothesized value) in SE. For the <b>CI</b>, use p&#770; (the observed value) in SE. This is a common exam distinction.</p>
+  <div class="danger">
+    <strong>SE for proportions &mdash; test vs CI (exam classic!):</strong><br>
+    &bull; For a <b>hypothesis test</b>: use the <b>null value</b> p&#8320; in the SE formula: SE = &radic;(p&#8320;(1 &minus; p&#8320;) / n)<br>
+    &bull; For a <b>confidence interval</b>: use the <b>observed value</b> p&#770; in the SE formula: SE = &radic;(p&#770;(1 &minus; p&#770;) / n)<br>
+    Mixing these up is one of the most common exam errors.
+  </div>
 
   <h3>Two-Proportion Z-Test</h3>
   <div class="formula">
     <div class="label">Pooled Proportion &amp; Test Statistic</div>
     p&#770;<sub>pool</sub> = (x<sub>1</sub> + x<sub>2</sub>) / (n<sub>1</sub> + n<sub>2</sub>)<br><br>
     Z = (p&#770;<sub>1</sub> &minus; p&#770;<sub>2</sub>) / &radic;(p&#770;<sub>pool</sub>(1 &minus; p&#770;<sub>pool</sub>)(1/n<sub>1</sub> + 1/n<sub>2</sub>))
+  </div>
+
+  <div class="highlight">
+    <strong>Why pooled proportion?</strong><br>
+    Under H&#8320;: p<sub>1</sub> = p<sub>2</sub>, we assume the two groups have the same population proportion. The pooled proportion p&#770;<sub>pool</sub> is the best estimate of that common proportion. Note: x<sub>1</sub> and x<sub>2</sub> are the <b>counts</b> of successes (not proportions), so p&#770;<sub>pool</sub> = total successes / total observations.
   </div>
 
   <h3>Exact Binomial Test (for small samples)</h3>
@@ -323,11 +437,92 @@
 </div>
 
 <!-- ============================================ -->
-<!-- LESSON 6: POWER & SAMPLE SIZE -->
+<!-- LESSON 7: SIMULATION-BASED HYPOTHESIS TESTING -->
 <!-- ============================================ -->
 <div class="lesson">
   <span class="lesson-tag tag-concept">Concept</span>
-  <h2>6. Power &amp; Sample Size</h2>
+  <h2>7. Simulation-Based Hypothesis Testing</h2>
+
+  <p>Instead of using formulas (Z or T statistics) to compute p-values, simulation-based testing generates a <b>null distribution</b> by simulating data under the null hypothesis, then checks how extreme the observed statistic is.</p>
+
+  <h3>Core Idea</h3>
+  <ol>
+    <li><b>Assume H&#8320; is true</b> and simulate many datasets under that assumption.</li>
+    <li><b>Compute the test statistic</b> for each simulated dataset &rarr; this gives the <b>null distribution</b>.</li>
+    <li><b>Compare</b> the observed statistic to the null distribution.</li>
+    <li><b>p-value</b> = proportion of simulated statistics that are as extreme as or more extreme than the observed statistic.</li>
+  </ol>
+
+  <div class="formula">
+    <div class="label">Simulation-Based p-value</div>
+    p-value = (number of simulated stats as extreme as observed) / (total reps)
+  </div>
+
+  <h3>Testing a Single Proportion (type = "draw")</h3>
+  <p>To test H&#8320;: p = p&#8320;, simulate draws from a population where the true proportion is p&#8320;:</p>
+
+  <div class="code-block"><span class="comment"># Test H₀: p = 0.10 against Hₐ: p ≠ 0.10</span>
+<span class="comment"># Observed: 15 out of 100 (p̂ = 0.15)</span>
+
+null_dist <span class="pipe">&lt;-</span> data <span class="pipe">|&gt;</span>
+  <span class="func">specify</span>(response <span class="pipe">=</span> outcome, success <span class="pipe">=</span> <span class="string">"yes"</span>) <span class="pipe">|&gt;</span>
+  <span class="func">hypothesize</span>(null <span class="pipe">=</span> <span class="string">"point"</span>, p <span class="pipe">=</span> <span class="number">0.10</span>) <span class="pipe">|&gt;</span>
+  <span class="func">generate</span>(reps <span class="pipe">=</span> <span class="number">1000</span>, type <span class="pipe">=</span> <span class="string">"draw"</span>) <span class="pipe">|&gt;</span>
+  <span class="func">calculate</span>(stat <span class="pipe">=</span> <span class="string">"prop"</span>)
+
+<span class="comment"># Get p-value</span>
+null_dist <span class="pipe">|&gt;</span>
+  <span class="func">get_p_value</span>(obs_stat <span class="pipe">=</span> <span class="number">0.15</span>, direction <span class="pipe">=</span> <span class="string">"two-sided"</span>)</div>
+
+  <div class="key-rule">
+    <strong><code>hypothesize(null = "point", p = ...)</code></strong> &mdash; used when testing a single proportion against a specific value. The <code>type = "draw"</code> in <code>generate()</code> means: draw new samples of size n from a population where p = p&#8320;.
+  </div>
+
+  <h3>Testing Independence / Comparing Groups (type = "permute")</h3>
+  <p>To test whether two groups are different (H&#8320;: no association), <b>permute</b> the group labels to break any real association:</p>
+
+  <div class="code-block"><span class="comment"># Test H₀: p₁ = p₂ (independence)</span>
+<span class="comment"># e.g., Does treatment affect outcome?</span>
+
+null_dist <span class="pipe">&lt;-</span> data <span class="pipe">|&gt;</span>
+  <span class="func">specify</span>(outcome <span class="pipe">~</span> group, success <span class="pipe">=</span> <span class="string">"yes"</span>) <span class="pipe">|&gt;</span>
+  <span class="func">hypothesize</span>(null <span class="pipe">=</span> <span class="string">"independence"</span>) <span class="pipe">|&gt;</span>
+  <span class="func">generate</span>(reps <span class="pipe">=</span> <span class="number">1000</span>, type <span class="pipe">=</span> <span class="string">"permute"</span>) <span class="pipe">|&gt;</span>
+  <span class="func">calculate</span>(stat <span class="pipe">=</span> <span class="string">"diff in props"</span>, order <span class="pipe">=</span> <span class="func">c</span>(<span class="string">"treatment"</span>, <span class="string">"control"</span>))</div>
+
+  <div class="key-rule">
+    <strong><code>hypothesize(null = "independence")</code></strong> &mdash; used when comparing two groups. The <code>type = "permute"</code> means: shuffle the group labels randomly. If H&#8320; is true (groups are the same), shuffling should not change the statistic much.
+  </div>
+
+  <h3>Summary: Which <code>generate()</code> type to use?</h3>
+  <table style="width:100%">
+    <tr><th>Goal</th><th><code>generate(type = ?)</code></th><th><code>hypothesize(null = ?)</code></th></tr>
+    <tr><td><b>Bootstrap CI</b></td><td><code>"bootstrap"</code></td><td>not used</td></tr>
+    <tr><td><b>Test single proportion/mean</b></td><td><code>"draw"</code></td><td><code>"point"</code></td></tr>
+    <tr><td><b>Test independence (2 groups)</b></td><td><code>"permute"</code></td><td><code>"independence"</code></td></tr>
+  </table>
+
+  <div class="highlight">
+    <strong>Simulation vs Formula &mdash; when does it matter?</strong><br>
+    &bull; For large samples, simulation-based and formula-based p-values are very close.<br>
+    &bull; Simulation is preferred when sample sizes are small, distributions are skewed, or the test statistic doesn't have a known theoretical distribution.<br>
+    &bull; On the exam, you'll typically be asked to fill in the <code>infer</code> pipeline or interpret simulation output, not run actual simulations.
+  </div>
+
+  <div class="example-box">
+    <div class="label">Interpreting simulation output:</div>
+    If you simulate 1,000 datasets under H&#8320; and find that 38 of them produce a test statistic as extreme as your observed statistic:<br><br>
+    p-value = 38 / 1000 = <b>0.038</b><br><br>
+    At &alpha; = 0.05: p-value = 0.038 &lt; 0.05 &rarr; <b>reject H&#8320;</b>.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 8: POWER & SAMPLE SIZE -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>8. Power &amp; Sample Size</h2>
 
   <p><b>Power</b> = probability of correctly rejecting H&#8320; when it's false = 1 &minus; &beta;. Higher power = better ability to detect a real effect.</p>
 
@@ -372,11 +567,11 @@
 </div>
 
 <!-- ============================================ -->
-<!-- LESSON 7: CI & TEST CONNECTION + SUMMARY -->
+<!-- LESSON 9: CI & TEST CONNECTION + SUMMARY -->
 <!-- ============================================ -->
 <div class="lesson">
   <span class="lesson-tag tag-summary">Cheat Sheet</span>
-  <h2>7. CI &amp; Test Connection + Summary</h2>
+  <h2>9. CI &amp; Test Connection + Summary</h2>
 
   <h3>The CI-Test Duality</h3>
   <div class="key-rule">
@@ -392,11 +587,15 @@
   <ol>
     <li><b>CI for mean:</b> x&#772; &plusmn; t* &middot; (s/&radic;n), df = n&minus;1</li>
     <li><b>CI for proportion:</b> p&#770; &plusmn; z* &middot; &radic;(p&#770;(1&minus;p&#770;)/n), check np&#770; &ge; 10</li>
+    <li><b>Bootstrap CI:</b> resample with replacement &rarr; SE method (x&#772; &plusmn; z* &middot; SE<sub>boot</sub>) or percentile method (use quantiles directly)</li>
     <li><b>Hypothesis test:</b> H&#8320; &rarr; test stat &rarr; p-value &rarr; compare &alpha; &rarr; conclude</li>
     <li><b>t-test:</b> T = (estimate &minus; null) / SE. Paired = test differences.</li>
     <li><b>Proportion Z-test:</b> use p&#8320; in SE for test, p&#770; in SE for CI</li>
+    <li><b>Pooled proportion:</b> p&#770;<sub>pool</sub> = (x<sub>1</sub> + x<sub>2</sub>) / (n<sub>1</sub> + n<sub>2</sub>) &mdash; use in two-proportion test SE</li>
     <li><b>Small samples:</b> use pbinom for exact binomial test</li>
-    <li><b>Power:</b> n &ge; (2&sigma;&sup2;/&delta;&sup2;)(z<sub>&alpha;/2</sub> + z<sub>&beta;</sub>)&sup2;, always round UP</li>
+    <li><b>Simulation-based test:</b> generate null distribution via <code>infer</code>, p-value = extreme simulations / total reps</li>
+    <li><b>infer types:</b> <code>"bootstrap"</code> for CI, <code>"draw"</code> for point null, <code>"permute"</code> for independence</li>
+    <li><b>Power:</b> n &ge; (2&sigma;&sup2;/&delta;&sup2;)(z<sub>1&minus;&alpha;/2</sub> + z<sub>1&minus;&beta;</sub>)&sup2;, always round UP</li>
     <li><b>Never say "accept H&#8320;"</b> &mdash; always "fail to reject H&#8320;"</li>
     <li><b>CI &harr; test:</b> value outside CI = reject, value inside CI = fail to reject</li>
   </ol>
@@ -634,6 +833,73 @@ Using &alpha; = 0.05 and power = 70%, how many students are needed per group (tw
       n = <b>60 per group</b> (120 total)<br><br>
 
       The university needs at least <b>60 students per group</b> to detect an increase of 1 survey with 70% power at the 5% significance level.
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 7 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 7 &mdash; Roulette Fairness (Simulation-Based Test)</div>
+  <span class="points">5 pts &bull; 2023 Retake Exam</span>
+  <div class="exercise-text">A casino patron suspects a roulette wheel is unfair. On a standard European roulette wheel, the probability of landing on red is P(red) = 18/37 &approx; 0.4865.
+
+The patron plays 500 games and red lands <b>260 times</b> (p&#770; = 260/500 = 0.52).
+
+We want to test whether the wheel is fair using a simulation-based approach with the <code>infer</code> package.
+
+a) State the hypotheses.
+
+b) Fill in the blanks in the following <code>infer</code> pipeline:</div>
+  <div class="hint-box">null_dist &lt;- roulette_data |&gt;
+  specify(response = _______, success = _______) |&gt;
+  hypothesize(null = _______, p = _______) |&gt;
+  generate(reps = 1000, type = _______) |&gt;
+  calculate(stat = _______)</div>
+  <div class="exercise-text">c) The simulation produces the following result: out of 1,000 simulated datasets under H&#8320;, <b>112</b> had a proportion of red &ge; 260/500 = 0.52.
+
+Compute the p-value and state your conclusion at &alpha; = 0.05.
+
+d) Would your conclusion change if we used a two-sided test? Explain.</div>
+  <div class="sub-label">a) Hypotheses</div>
+  <textarea class="answer-area" data-id="P7a" placeholder="State H₀ and Hₐ..."></textarea>
+  <div class="sub-label">b) Fill in the blanks</div>
+  <textarea class="answer-area" data-id="P7b" placeholder="response = ?, success = ?, null = ?, p = ?, type = ?, stat = ?"></textarea>
+  <div class="sub-label">c) p-value and conclusion</div>
+  <textarea class="answer-area" data-id="P7c" placeholder="Compute p-value from simulation output..." style="min-height:120px"></textarea>
+  <div class="sub-label">d) Two-sided test?</div>
+  <textarea class="answer-area" data-id="P7d" placeholder="Would the conclusion change?"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a) Hypotheses:</b><br>
+      H&#8320;: p = 18/37 &approx; 0.4865 (the wheel is fair)<br>
+      H<sub>A</sub>: p &gt; 18/37 (red lands more often than expected &mdash; one-sided test)<br>
+      Or, if testing for any deviation: H<sub>A</sub>: p &ne; 18/37 (two-sided)<br><br>
+
+      <b>b) Completed pipeline:</b><br>
+      <code style="font-size:13px; display:block; background:#f8f9fa; padding:10px; border-radius:6px; white-space:pre; overflow-x:auto">null_dist &lt;- roulette_data |&gt;
+  specify(response = color, success = "red") |&gt;
+  hypothesize(null = "point", p = 18/37) |&gt;
+  generate(reps = 1000, type = "draw") |&gt;
+  calculate(stat = "prop")</code><br>
+      <b>Explanation of each blank:</b><br>
+      &bull; <code>response = color</code> &mdash; the variable recording the outcome of each spin (e.g., "red" or "not red")<br>
+      &bull; <code>success = "red"</code> &mdash; which level counts as a "success"<br>
+      &bull; <code>null = "point"</code> &mdash; we're testing against a specific value (not independence)<br>
+      &bull; <code>p = 18/37</code> &mdash; the null hypothesis proportion<br>
+      &bull; <code>type = "draw"</code> &mdash; simulate new samples by drawing from a population where p = 18/37<br>
+      &bull; <code>stat = "prop"</code> &mdash; compute the proportion of reds in each simulated sample<br><br>
+
+      <b>c) p-value (one-sided):</b><br>
+      Out of 1,000 simulations, 112 had a proportion &ge; 0.52.<br><br>
+      p-value = 112 / 1000 = <b>0.112</b><br><br>
+      <b>Conclusion:</b> Since p-value = 0.112 &gt; &alpha; = 0.05, we <b>fail to reject H&#8320;</b>. There is not sufficient evidence to conclude that the roulette wheel is unfair. The observed proportion of 0.52 is within the range of what we would expect from random chance with a fair wheel.<br><br>
+
+      <b>d) Two-sided test:</b><br>
+      For a two-sided test, we would also count simulations with proportions as extreme in the other direction (i.e., &le; 2&times;0.4865 &minus; 0.52 = 0.453).<br>
+      Approximately: p-value<sub>two-sided</sub> &approx; 2 &times; 0.112 = <b>0.224</b>.<br>
+      This is even larger than 0.05, so the conclusion would <b>not change</b> &mdash; we would still fail to reject H&#8320;. If anything, the two-sided test is more conservative (harder to reject).
     </div>
   </div>
 </div>

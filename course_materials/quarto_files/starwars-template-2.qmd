@@ -1,0 +1,57 @@
+---
+title: "Exploring Starwars characters"
+output: html_document
+---
+
+We want to work with the `starwars` dataset, which is part of the `dplyr` package. Since we also need `ggplot2`, we load the `tidyverse`.
+
+```{r}
+#| label: load-packages-ex-starwars
+library(tidyverse)
+```
+
+### Tasks
+
+
+a)
+
+
+```{r}
+#| label: add-label-1
+#| eval: false
+ggplot(starwars, aes(x = height)) + 
+  ___
+
+ggplot(starwars, aes(x = mass)) + 
+  ___
+
+ggplot(starwars, aes(x = birth_year)) + 
+  ___
+
+```
+
+
+
+b)
+
+
+```{r}
+#| label: add-label-2
+# add code here
+# pay attention to correctness and code style
+
+```
+
+
+
+c)
+
+
+```{r} 
+#| label: add-label-3
+# add code here
+# pay attention to correctness and code style
+
+```
+
+

@@ -1,6 +1,6 @@
-# Statistics for Business Administration — Crash Course
+# Introduction to Data Science and Statistical Thinking — Crash Course
 
-Interactive, self-paced learning modules for the TUM Statistics exam (MA9712 / CIT5130002).
+Interactive, self-paced learning modules for the TUM exam (CIT5130002 / MA9712).
 
 **Learn by doing, not by watching lectures.**
 
@@ -16,19 +16,31 @@ Open any module HTML file in your browser, read the lesson, solve the exercises,
 
 | # | Module | Topics | Time |
 |---|--------|--------|------|
-| 1 | [Study Design & Data Basics](modules/01_study_design.html) | Observational vs experimental, sampling methods, variables, descriptive stats | ~30 min |
-| 2 | [Probability & Bayes' Theorem](modules/02_probability_bayes.html) | Conditional probability, Bayes, independence, contingency tables | ~40 min |
-| 3 | [Distributions](modules/03_distributions.html) | Binomial, Poisson, Geometric, Normal, CLT | ~45 min |
-| 4 | [Confidence Intervals & Hypothesis Testing](modules/04_confidence_intervals_hypothesis.html) | CI construction, t-test, p-values, proportion tests | ~50 min |
-| 5 | [Chi-Squared & ANOVA](modules/05_chisquared_anova.html) | GOF, independence test, ANOVA table, Bonferroni | ~50 min |
-| 6 | [Linear Regression](modules/06_linear_regression.html) | Interpretation, R², adjusted R², AIC backward elimination, residuals | ~45 min |
-| 7 | [Logistic Regression & R Code](modules/07_logistic_regression_r.html) | Odds ratio, sensitivity/specificity, ROC/AUC, infer workflow | ~45 min |
+| 1 | [Study Design & Data Basics](modules/01_study_design.html) | Observational vs experimental, sampling, variables, descriptive stats, probability distributions, median robustness | ~35 min |
+| 2 | [Probability & Bayes' Theorem](modules/02_probability_bayes.html) | Conditional probability, Bayes, independence, contingency tables, variance, covariance, Z-score | ~50 min |
+| 3 | [Distributions](modules/03_distributions.html) | Binomial, Poisson, Geometric, Negative Binomial, Normal, continuous distributions, CDF, CLT | ~50 min |
+| 4 | [Confidence Intervals & Hypothesis Testing](modules/04_confidence_intervals_hypothesis.html) | CI construction, bootstrap CI, t-test, p-values, proportion tests, simulation-based testing, infer workflow, power | ~60 min |
+| 5 | [Chi-Squared & ANOVA](modules/05_chisquared_anova.html) | GOF, independence test, ANOVA table, Bonferroni, simulation-based chi-squared, infer workflow | ~55 min |
+| 6 | [Linear Regression](modules/06_linear_regression.html) | Interpretation, R², adjusted R², AIC backward/forward selection, cross-validation, collinearity, residuals | ~55 min |
+| 7 | [Classification, Bias-Variance & Logistic Regression](modules/07_logistic_regression_r.html) | KNN, bias-variance tradeoff, logistic regression, odds ratio, sensitivity/specificity, ROC/AUC, Youden's J, cross-validation | ~60 min |
 
 ## Study Plan (3 weeks to exam)
 
 - **Week 1**: Complete all 7 modules (1 per day)
 - **Week 2**: Practice with past exams, review weak areas
 - **Week 3**: Full exam simulations under timed conditions
+
+## Course Materials
+
+The `course_materials/` folder contains the official course resources:
+
+| Resource | Description |
+|----------|-------------|
+| [Course Script](course_materials/course_script.pdf) | Full lecture notes (Drton, Düker, Haug) |
+| [Problems2solve](course_materials/problem_sets/problems2solve.pdf) | Course exercise sheet |
+| [Problems2solve Solutions](course_materials/problem_sets/problems2solve_solutions.pdf) | Official solutions |
+| [Sample Solutions](course_materials/sample_solutions/) | Problem sets 02-11 with solutions |
+| [Quarto Files](course_materials/quarto_files/) | R/Quarto templates for exercises |
 
 ## Past Exams
 
@@ -44,7 +56,7 @@ All past exams are in the `exams/` folder for reference and practice:
 
 ## Based on
 
-Analysis of 8 past exams (2019-2024) from TUM's Statistics for Business Administration course. Every exercise mirrors the exact format, difficulty, and R output style used in the real exam.
+Analysis of 8 past exams (2019-2024) + course script + exercise sheets from TUM's Introduction to Data Science and Statistical Thinking course. Every exercise mirrors the exact format, difficulty, and R output style used in the real exam.
 
 ## Contributing
 

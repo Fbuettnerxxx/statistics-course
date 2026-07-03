@@ -90,7 +90,7 @@
 
 <header>
   <h1>Module 6: Linear Regression</h1>
-  <div class="sub">Interpret slopes, R&sup2;, AIC backward elimination &mdash; every exam</div>
+  <div class="sub">Interpret slopes, R&sup2;, AIC model selection, cross-validation, collinearity &mdash; every exam</div>
   <div class="week">Week 1 &bull; Day 6</div>
 </header>
 
@@ -249,18 +249,38 @@
 
   <div class="formula">
     <div class="label">Test statistic</div>
-    T = (b<sub>j</sub> &minus; 0) / SE<sub>b<sub>j</sub></sub> &nbsp;&nbsp;&nbsp; with df = n &minus; k &minus; 1
+    T = (b<sub>j</sub> &minus; 0) / SE<sub>b<sub>j</sub></sub> = Estimate / Std. Error &nbsp;&nbsp;&nbsp; with df = n &minus; k &minus; 1
   </div>
 
   <p>where k = number of predictors in the model.</p>
 
+  <div class="danger">
+    <strong>Computing T from an incomplete summary table:</strong> Sometimes the exam gives you an R summary table with a missing t-value. You must compute it yourself: <b>T = Estimate / Std. Error</b>. This is a direct division &mdash; nothing more.<br><br>
+    Example (2023 retake): For the predictor "thigh" with Estimate = 0.170 and Std. Error = 0.122:<br>
+    T = 0.170 / 0.122 = <b>1.393</b>
+  </div>
+
+  <h3>Confidence Interval for a Coefficient</h3>
+
   <div class="formula">
-    <div class="label">Confidence Interval for a coefficient</div>
-    b<sub>j</sub> &plusmn; t* &middot; SE<sub>b<sub>j</sub></sub>
+    <div class="label">Confidence Interval for &beta;<sub>j</sub></div>
+    b<sub>j</sub> &plusmn; t*<sub>(n&minus;k&minus;1)</sub> &middot; SE<sub>b<sub>j</sub></sub>
+  </div>
+
+  <p>where t*<sub>(n&minus;k&minus;1)</sub> is the critical value from the t-distribution with df = n &minus; k &minus; 1 degrees of freedom.</p>
+
+  <div class="example-box">
+    <div class="label">Worked example (from 2024 exam): 95% CI for neck coefficient</div>
+    Suppose the summary output gives: Estimate(neck) = &minus;0.432, SE = 0.145, df = 245.<br><br>
+    The 95% critical value for df = 245 is t* &approx; 1.970 (from <code>qt(0.975, df=245)</code>).<br><br>
+    95% CI = &minus;0.432 &plusmn; 1.970 &times; 0.145<br>
+    = &minus;0.432 &plusmn; 0.2857<br>
+    = <b>(&minus;0.718, &minus;0.146)</b><br><br>
+    Since the interval does NOT contain 0, we conclude that neck is a <b>significant</b> predictor at the 5% level.
   </div>
 
   <div class="key-rule">
-    <strong>Decision rules (equivalent):</strong><br>
+    <strong>Decision rules (all equivalent):</strong><br>
     &bull; If p-value &lt; &alpha;, reject H&#8320; &rarr; predictor is significant<br>
     &bull; If the CI for &beta;<sub>j</sub> does NOT contain 0, the predictor is significant<br>
     &bull; If |T| &gt; t*<sub>crit</sub>, reject H&#8320;
@@ -272,11 +292,11 @@
 </div>
 
 <!-- ============================================ -->
-<!-- LESSON 5: AIC BACKWARD ELIMINATION -->
+<!-- LESSON 5: AIC MODEL SELECTION (BACKWARD & FORWARD) -->
 <!-- ============================================ -->
 <div class="lesson">
   <span class="lesson-tag tag-concept">Concept</span>
-  <h2>5. AIC Backward Elimination</h2>
+  <h2>5. AIC Model Selection &mdash; Backward Elimination &amp; Forward Selection</h2>
 
   <p>AIC (Akaike Information Criterion) balances model fit against complexity:</p>
 
@@ -285,9 +305,9 @@
     AIC = constant + n &middot; ln(RSS / n) + 2k
   </div>
 
-  <p>Lower AIC = better model. The <code>step()</code> function in R performs backward elimination automatically.</p>
+  <p>Lower AIC = better model. The <code>step()</code> function in R performs stepwise selection automatically.</p>
 
-  <h3>How backward elimination works:</h3>
+  <h3>Backward Elimination</h3>
   <ol>
     <li>Start with the full model (all predictors). Note the current AIC.</li>
     <li>Try removing each variable one at a time. For each removal, compute the new AIC.</li>
@@ -296,12 +316,52 @@
     <li>The <code>&lt;none&gt;</code> row shows the AIC of keeping all remaining variables.</li>
   </ol>
 
+  <h3>Forward Selection</h3>
+  <p>Forward selection works in the opposite direction:</p>
+  <ol>
+    <li>Start with the <b>intercept-only model</b> (no predictors).</li>
+    <li>Try adding each available variable one at a time. For each addition, compute the new AIC.</li>
+    <li><b>Add the variable whose addition gives the LOWEST AIC.</b></li>
+    <li>Repeat until no addition would <b>decrease</b> AIC.</li>
+    <li>The <code>&lt;none&gt;</code> row shows the AIC of the current model without adding anything.</li>
+  </ol>
+
+  <div class="example-box">
+    <div class="label">Example: Forward selection AIC table (from exercise 5.7)</div>
+    <table style="width:100%">
+      <tr><th>Add</th><th>Df</th><th>AIC</th></tr>
+      <tr><td>+ abdomen</td><td>1</td><td>1460.2</td></tr>
+      <tr><td>+ chest</td><td>1</td><td>1508.7</td></tr>
+      <tr><td>+ hip</td><td>1</td><td>1518.4</td></tr>
+      <tr><td>&lt;none&gt;</td><td></td><td>1572.3</td></tr>
+    </table>
+    <br>
+    Current model AIC = 1572.3 (&lt;none&gt; row).<br>
+    Adding abdomen gives AIC = 1460.2, which is the <b>lowest</b> and is below 1572.3 &rarr; <b>add abdomen</b>.<br>
+    In the next step, try adding each remaining variable to the model that already includes abdomen.
+  </div>
+
+  <div class="vs-box">
+    <div class="vs-card vs-left">
+      <strong>Backward Elimination</strong>
+      Start with all predictors.<br>
+      Remove the weakest one at each step.<br>
+      Good when you have a reasonable full model.
+    </div>
+    <div class="vs-card vs-right">
+      <strong>Forward Selection</strong>
+      Start with intercept only.<br>
+      Add the strongest predictor at each step.<br>
+      Good when you have many potential predictors.
+    </div>
+  </div>
+
   <div class="danger">
     <strong>EXAM TRAP:</strong> In the <code>step()</code> output, the rows are often <b>permuted/shuffled</b> (not in the order you might expect). You must scan ALL rows to find the one with the minimum AIC value. Do NOT just pick the first or last row!
   </div>
 
   <div class="example-box">
-    <div class="label">Reading step() output:</div>
+    <div class="label">Reading step() output (backward elimination):</div>
     <table style="width:100%">
       <tr><th>Remove</th><th>Df</th><th>AIC</th></tr>
       <tr><td>&lt;none&gt;</td><td></td><td>4415.11</td></tr>
@@ -322,11 +382,104 @@
 </div>
 
 <!-- ============================================ -->
-<!-- LESSON 6: RESIDUAL ANALYSIS -->
+<!-- LESSON 6: CROSS-VALIDATION -->
 <!-- ============================================ -->
 <div class="lesson">
   <span class="lesson-tag tag-concept">Concept</span>
-  <h2>6. Residual Analysis &mdash; Checking Model Assumptions</h2>
+  <h2>6. Cross-Validation</h2>
+
+  <p>Cross-validation (CV) is a technique for estimating how well a model generalizes to new, unseen data. Unlike R&sup2; or AIC which only measure fit on the training data, CV actually tests prediction on held-out data.</p>
+
+  <h3>How k-fold Cross-Validation Works</h3>
+  <ol>
+    <li>Randomly split the data into <b>k equally sized folds</b> (groups).</li>
+    <li>For each fold i = 1, ..., k:
+      <ul>
+        <li>Use fold i as the <b>test set</b></li>
+        <li>Use the remaining k &minus; 1 folds as the <b>training set</b></li>
+        <li>Fit the model on training data, compute prediction error (RMSE) on test data</li>
+      </ul>
+    </li>
+    <li>Average the k error estimates to get the overall CV error.</li>
+  </ol>
+
+  <div class="formula">
+    <div class="label">k-fold CV Error</div>
+    CV(k) = (1/k) &Sigma;<sub>i=1</sub><sup>k</sup> RMSE<sub>i</sub>
+  </div>
+
+  <div class="formula">
+    <div class="label">RMSE (Root Mean Squared Error)</div>
+    RMSE = &radic;MSE = &radic;[(1/n<sub>test</sub>) &Sigma;(y<sub>i</sub> &minus; &#375;<sub>i</sub>)&sup2;]
+  </div>
+
+  <div class="key-rule">
+    <strong>Using CV to compare models:</strong><br>
+    &bull; Fit each candidate model using the same k-fold split<br>
+    &bull; Compute CV error for each model<br>
+    &bull; The model with <b>lower CV error</b> generalizes better<br><br>
+    Common choices: k = 5 or k = 10. With k = 10 ("10-fold CV"), each fold contains 10% of the data.
+  </div>
+
+  <h3>CV for Classification Models</h3>
+  <p>When comparing classification models (e.g., logistic regression), CV can use different metrics instead of RMSE:</p>
+  <ul>
+    <li><b>Accuracy:</b> proportion of correct predictions (higher is better)</li>
+    <li><b>ROC AUC:</b> area under the ROC curve (higher is better)</li>
+  </ul>
+
+  <div class="highlight">
+    <strong>Key insight:</strong> Cross-validation gives you an honest estimate of out-of-sample performance. A model can have high R&sup2; on training data but poor CV performance if it is overfitting. Always prefer CV error over training error when choosing between models.
+  </div>
+
+  <div class="danger">
+    <strong>Exam trap:</strong> When comparing models with CV, make sure you compare the <b>same metric</b>. If one model reports CV accuracy and another reports CV RMSE, you cannot directly compare them. Also note: for error metrics (RMSE), <b>lower is better</b>; for performance metrics (accuracy, AUC), <b>higher is better</b>.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 7: COLLINEARITY -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>7. Collinearity</h2>
+
+  <p><b>Collinearity</b> (or multicollinearity) occurs when two or more predictor variables in a multiple regression model are highly correlated with each other.</p>
+
+  <h3>Why it matters</h3>
+  <ul>
+    <li>Makes <b>individual coefficient estimates unreliable</b> &mdash; the standard errors become inflated, so t-values shrink and p-values increase</li>
+    <li>Coefficients can change drastically when a correlated predictor is added or removed</li>
+    <li>Does <b>NOT</b> affect overall prediction quality &mdash; the model as a whole can still predict well</li>
+  </ul>
+
+  <h3>How to detect collinearity</h3>
+  <ul>
+    <li><b>Correlation matrix:</b> Compute pairwise correlations between predictors. High correlation (|r| &gt; 0.7&ndash;0.8) suggests collinearity.</li>
+    <li><b>Symptom:</b> A predictor you expect to be significant (based on simple regression) becomes non-significant in the multiple regression model.</li>
+  </ul>
+
+  <div class="example-box">
+    <div class="label">Example:</div>
+    Suppose you fit: &#375; = b&#8320; + b&#8321;&middot;chest + b&#8322;&middot;abdomen<br><br>
+    If chest and abdomen are highly correlated (r = 0.92), then:<br>
+    &bull; Both are individually strong predictors (significant in simple regression)<br>
+    &bull; But in the joint model, one or both may appear non-significant<br>
+    &bull; The model R&sup2; is still high &mdash; overall prediction is fine<br>
+    &bull; The individual slope estimates are just hard to separate
+  </div>
+
+  <div class="key-rule">
+    <strong>Bottom line:</strong> Collinearity is a problem for <b>interpretation</b> (which predictor gets "credit"?), not for <b>prediction</b>. If your goal is prediction, collinearity is less of a concern. If your goal is understanding individual effects, remove or combine collinear predictors.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 8: RESIDUAL ANALYSIS -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>8. Residual Analysis &mdash; Checking Model Assumptions</h2>
 
   <p>After fitting a linear model, R produces 4 diagnostic plots via <code>plot(model)</code>. Each checks a specific assumption:</p>
 
@@ -368,11 +521,11 @@
 </div>
 
 <!-- ============================================ -->
-<!-- LESSON 7: INTERACTION TERMS & SUMMARY -->
+<!-- LESSON 9: INTERACTION TERMS & SUMMARY -->
 <!-- ============================================ -->
 <div class="lesson">
   <span class="lesson-tag tag-summary">Cheat Sheet</span>
-  <h2>7. Interaction Terms &amp; Module Summary</h2>
+  <h2>9. Interaction Terms &amp; Module Summary</h2>
 
   <h3>Writing out the simplified model for a specific category</h3>
   <p>When a model has indicator variables and interactions, substitute the category value to simplify:</p>
@@ -399,7 +552,11 @@
     <li>R&sup2; = 1 &minus; SS<sub>Res</sub>/SS<sub>Tot</sub>; for simple regression R&sup2; = r&sup2;</li>
     <li>R&sup2;<sub>adj</sub> = 1 &minus; (Residual SE)&sup2;/Var(y) &mdash; penalizes extra predictors</li>
     <li>T-test for coefficients: T = b<sub>j</sub>/SE, df = n &minus; k &minus; 1</li>
+    <li>Confidence interval for slope: b<sub>j</sub> &plusmn; t* &middot; SE; if CI excludes 0 &rarr; significant</li>
     <li>AIC backward elimination: remove variable giving <b>lowest AIC</b>; stop when &lt;none&gt; is lowest</li>
+    <li>AIC forward selection: add variable giving <b>lowest AIC</b>; stop when &lt;none&gt; is lowest</li>
+    <li>Cross-validation: CV(k) = (1/k) &Sigma; RMSE<sub>i</sub>; lower CV error = better generalization</li>
+    <li>Collinearity: correlated predictors inflate SE but don't hurt overall prediction</li>
     <li>4 diagnostic plots: linearity, normality, homoscedasticity, influential points</li>
   </ol>
 </div>
@@ -637,6 +794,91 @@ Is the adjusted R&sup2; of model_step smaller or larger than that of model_full?
       <b>Plot 4: Residuals vs Leverage</b><br>
       Checks: <b>Influential observations</b> (outliers with high leverage).<br>
       Good: No points outside Cook's distance contours (dashed lines). Cook's distance should be &lt; 0.5 for all observations. Points with high leverage AND large residuals are problematic.
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 7 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 7 &mdash; Compute Missing Test Statistic</div>
+  <span class="points">2 pts &bull; From 2023 retake</span>
+  <div class="exercise-text">A multiple regression model predicts body fat percentage from several body measurements. Part of the R summary output is shown below, but the t-value for "thigh" is missing:</div>
+  <div class="hint-box">Coefficients:
+              Estimate Std. Error t value Pr(>|t|)
+(Intercept) -19.174      8.361   -2.293   0.0228
+abdomen       0.901      0.071   12.690  < 2e-16
+thigh         0.170      0.122     ???    0.1648
+forearm       0.487      0.185    2.632   0.0090</div>
+  <div class="exercise-text">
+a) Compute the missing t-value for the thigh predictor.
+b) Based on the p-value, is thigh a significant predictor at &alpha; = 0.05?
+c) Compute a 95% confidence interval for the thigh coefficient. Use t* = 1.972 (df = 245).</div>
+  <div class="sub-label">a) Missing t-value</div>
+  <textarea class="answer-area" data-id="P7a" placeholder="T = Estimate / Std. Error = ..."></textarea>
+  <div class="sub-label">b) Significance</div>
+  <textarea class="answer-area" data-id="P7b" placeholder="Since p-value ..."></textarea>
+  <div class="sub-label">c) 95% CI for thigh</div>
+  <textarea class="answer-area" data-id="P7c" placeholder="CI = Estimate ± t* · SE = ..." style="min-height:100px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a)</b><br>
+      T = Estimate / Std. Error = 0.170 / 0.122 = <b>1.393</b><br><br>
+
+      <b>b)</b><br>
+      p-value = 0.1648 &gt; 0.05 = &alpha;<br>
+      <b>Do NOT reject H&#8320;.</b> Thigh is <b>not</b> a significant predictor of body fat at the 5% significance level, after accounting for the other predictors in the model.<br><br>
+
+      <b>c)</b><br>
+      95% CI = b<sub>thigh</sub> &plusmn; t* &middot; SE<sub>thigh</sub><br>
+      = 0.170 &plusmn; 1.972 &times; 0.122<br>
+      = 0.170 &plusmn; 0.2406<br>
+      = <b>(&minus;0.071, 0.411)</b><br><br>
+      Since the confidence interval <b>contains 0</b>, this confirms that thigh is not significant at the 5% level &mdash; consistent with the p-value conclusion.
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 8 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 8 &mdash; Cross-Validation Model Comparison</div>
+  <span class="points">3 pts &bull; From 2024 exam</span>
+  <div class="exercise-text">You are comparing two logistic regression models for predicting whether a patient has a disease. You perform 10-fold cross-validation on both models and obtain the following results:
+
+Model A (3 predictors: age, blood_pressure, cholesterol):
+  - Mean CV Accuracy: 0.823
+  - Mean CV ROC AUC:  0.871
+
+Model B (6 predictors: age, blood_pressure, cholesterol, bmi, smoking, exercise):
+  - Mean CV Accuracy: 0.817
+  - Mean CV ROC AUC:  0.864
+
+a) Explain what "10-fold cross-validation" means. What does each fold represent?
+b) Which model would you choose? Justify using both metrics.
+c) Model B has more predictors than Model A. Why might adding more predictors actually lead to worse CV performance?</div>
+  <div class="sub-label">a) Explain 10-fold CV</div>
+  <textarea class="answer-area" data-id="P8a" placeholder="The data is split into ..." style="min-height:120px"></textarea>
+  <div class="sub-label">b) Model choice</div>
+  <textarea class="answer-area" data-id="P8b" placeholder="I would choose Model ... because ..." style="min-height:120px"></textarea>
+  <div class="sub-label">c) Why more predictors can hurt</div>
+  <textarea class="answer-area" data-id="P8c" placeholder="Adding predictors can ..."></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a)</b><br>
+      In 10-fold CV, the dataset is randomly split into 10 equally sized subsets (folds). The model is trained and tested 10 times: each time, one fold is held out as the test set and the remaining 9 folds are used as the training set. The performance metric (accuracy, AUC, etc.) is computed on each test fold, and the 10 results are averaged to produce the final CV estimate.<br><br>
+      Each fold represents approximately 10% of the data, and every observation appears in the test set exactly once.<br><br>
+
+      <b>b)</b><br>
+      <b>Choose Model A.</b><br><br>
+      Model A has higher CV accuracy (0.823 &gt; 0.817) AND higher CV ROC AUC (0.871 &gt; 0.864). Both metrics indicate that Model A generalizes better to unseen data.<br><br>
+      Additionally, Model A is simpler (3 predictors vs. 6), so by the principle of parsimony, we prefer the simpler model when performance is equal or better.<br><br>
+
+      <b>c)</b><br>
+      Adding more predictors can lead to <b>overfitting</b>: the model fits noise in the training data rather than the true underlying pattern. While the training performance may improve (R&sup2; always increases), the model's ability to predict on new data can decrease. Cross-validation detects this because it evaluates on held-out data.<br><br>
+      The additional predictors (bmi, smoking, exercise) may not carry enough predictive signal to justify the added complexity, or they may be collinear with the existing predictors, adding noise without improving predictions.
     </div>
   </div>
 </div>

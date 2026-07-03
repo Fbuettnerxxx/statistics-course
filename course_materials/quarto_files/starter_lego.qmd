@@ -1,0 +1,242 @@
+---
+title: "LEGO"
+format: 
+  html:
+    embed-resources: true
+---
+
+### Packages
+
+We will use the **tidyverse** package for the majority of data wrangling and visualization tasks. The __tidyverse__ can be loaded with the following command:
+
+```{r}
+#| label: load-packages
+#| message: false
+library(tidyverse)
+```
+
+## Data
+
+The data is contained in the file `lego.csv` and can be found on Moodle in the folder *Data files, Quarto files and Solutions to previous problem sets*.
+
+It is simulated data based on real prices for LEGO sales in 2018 in the United States. Names and hobbies have been randomly generated. The dataset contains the following variables.
+
+| Variable    | Description |
+| -------- | ------- |
+| `first_name` | First name of customer |
+| `last_name` | Last name of customer |
+| `age`  | Age of customer |
+| `phone_number` | Phone number of customer |
+| `set_id` | Set ID of LEGO set purchased | 
+| `number` | Item number of LEGO set purchased |
+| `theme` | Theme of LEGO set purchased |
+| `subtheme` | Sub theme of LEGO set purchased |
+| `year` | Year of purchase |
+| `name` | Name of LEGO set purchased |
+| `pieces` | Number of pieces of LEGOs in set purchased |
+| `us_price` | Price of the set purchased in US Dollars |
+| `quantity` | Quantity of LEGO set(s) purchased |
+
+
+
+## Solutions
+
+
+
+
+::: {#sol-1}
+
+Save the data and the starter file appropriately so the following code works.
+
+
+
+```{r}
+#| label: readin-data
+#| message: false
+#| eval: false
+lego <- read_csv("data/lego.csv")
+```
+
+  *Remark:* Don't forget to remove `eval: false` or change it to  `eval: true`.
+
+  Take a glimpse at the data.
+
+```{r}
+#| eval: false
+lego
+```
+
+:::  
+
+
+
+
+::: {#sol-2}
+
+Remove this text, and add your answer for Exercise 2 here. Complete the given R code. Remove 
+the chunk option `eval: false`.
+
+
+```{r}
+#| eval: false
+lego |> 
+  
+```
+
+
+
+:::  
+
+
+
+
+
+
+::: {#sol-3}
+
+Remove this text, and add your answer for Exercise 3 here. Complete the given R code. Remove 
+the chunk option `eval: false`.
+
+```{r}
+#| eval: false
+lego <- lego |> 
+  drop_na(___)
+```
+
+
+:::  
+
+
+
+::: {.callout-important icon=false}
+
+# Note
+
+Use the reduced dataset for all subsequent questions.
+
+
+:::
+
+
+
+
+
+::: {#sol-4}
+Remove this text, and add your answer for Exercise 4 here. Complete the given R code. Remove 
+the chunk option `eval: false`.
+
+
+```{r}
+#| eval: false
+lego |> 
+  group_by(theme) |>
+  
+```
+
+You can solve the task in two steps
+
+```{r}
+
+```
+
+
+
+:::  
+
+
+
+
+
+
+
+::: {#sol-5}
+
+Remove this text, and add your answer for Exercise 5 here. Complete the given R code. Remove 
+the chunk option `eval: false`.
+
+```{r}
+#| eval: false
+lego <- lego |> 
+  mutate(age_group = ___ )
+```
+:::  
+
+
+
+
+::: {#sol-6}
+
+Remove this text, and add your answer for Exercise 6 here. Complete the given R code. Remove 
+the chunk option `eval: false`.
+
+
+
+```{r}
+#| eval: false
+lego |> 
+  group_by(___) |>
+  
+```
+
+:::  
+
+
+
+
+
+
+
+
+
+::: {#sol-7}
+Remove this text, and add your answer for Exercise 7 here. Complete the given R code. Remove 
+the chunk option `eval: false`.
+
+
+```{r}
+#| label: theme-age-dependence-2
+#| eval: false
+lego |> 
+  filter( ___ ) |> 
+  ggplot(aes(x = ___, ___)) +
+  
+
+```
+
+
+
+Between the variables `theme` and `age_group`....
+:::  
+
+
+
+
+
+
+::: {#sol-8}
+Remove this text, and add your answer for Exercise 8 here. Complete the given R code. R
+
+
+
+```{r}
+
+
+
+```
+
+:::  
+
+
+
+
+::: {#sol-9}
+Remove this text, and add your answer for Exercise 9 here. Complete the given R code.
+
+
+
+```{r}
+
+```
+
+:::  
+

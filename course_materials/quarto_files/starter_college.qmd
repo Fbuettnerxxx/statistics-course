@@ -1,0 +1,112 @@
+---
+title: "College"
+format: 
+  html:
+    embed-resources: true
+---
+
+
+```{r}
+library(tidyverse)
+```
+
+
+a) 
+
+```{r} 
+#| eval: false
+College <- read_csv("data/College.csv")
+```
+
+
+
+b) 
+
+```{r}
+#| eval: false
+College |> 
+  summarize(
+    ___
+  ) |> 
+  print(width = Inf)
+```
+
+
+c) 
+
+```{r}
+#| eval: false
+ggplot(College, ___) +
+  geom____()
+```
+
+d)
+
+
+```{r}
+#| eval: false
+
+# Splitting data into train and test data 
+# training data should be roughly 70%: 777*0.7 around 544
+set.seed(1)
+indices <- sample(1:777, 544)
+train <- College[indices,] 
+test <- College[-indices,]
+
+# Scale all predictors
+train_scale <- scale(train[, 3:19]) 
+test_scale <- scale(test[, 3:19]) 
+
+
+```
+
+
+__Install the `class` package before you start working on the exercise.__
+
+```{r}
+library(class)
+# Fitting KNN Model to training dataset 
+
+
+```
+
+Compute the accuracy
+
+```{r}
+
+```
+
+
+
+
+e) 
+
+Create the variable `Elite`
+
+```{r}
+#| eval: false
+College <- College |> 
+  mutate(
+    ___
+  )
+```
+
+Compute the contingency table
+
+```{r}
+#| eval: false
+College |> 
+  ___
+
+```
+
+
+Visualize the distribution of `Outstate` for each combination of `Elite` and `Private`
+
+```{r}
+#| eval: false
+ggplot(College, ___) +
+  geom_ ___()
+```
+
+

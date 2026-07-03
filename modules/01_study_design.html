@@ -245,7 +245,102 @@
 </div>
 
 <!-- ============================================ -->
-<!-- LESSON 6: QUICK SUMMARY -->
+<!-- LESSON 6: PROBABILITY DISTRIBUTIONS -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>6. Identifying Valid Probability Distributions</h2>
+  <p>This topic appears in <b>every single exam</b> (2023, 2023 retake, 2024). You will be given a table and asked which distributions are valid.</p>
+
+  <h3>Two rules for a valid probability distribution</h3>
+  <ol>
+    <li><b>Every probability must be between 0 and 1</b> (inclusive): 0 &le; P(x) &le; 1</li>
+    <li><b>All probabilities must sum to exactly 1:</b> &sum; P(x) = 1</li>
+  </ol>
+
+  <div class="key-rule">
+    <strong>Exam Rule:</strong> If even ONE probability is negative or greater than 1, the distribution is invalid — regardless of the sum. Always check both conditions.
+  </div>
+
+  <h3>Example: Which distributions are valid?</h3>
+  <p>A random variable X represents grades (1 through 5). Four proposed distributions:</p>
+
+  <table>
+    <tr><th>Grade</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>Sum</th><th>Valid?</th></tr>
+    <tr><td><b>P<sub>a</sub></b></td><td>0.3</td><td>0.3</td><td>0.3</td><td>0.2</td><td>0.1</td><td>1.2</td><td style="color:#c0392b; font-weight:700;">INVALID — sum &gt; 1</td></tr>
+    <tr><td><b>P<sub>b</sub></b></td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1.0</td><td style="color:#27ae60; font-weight:700;">VALID</td></tr>
+    <tr><td><b>P<sub>c</sub></b></td><td>0.3</td><td>0.3</td><td>0.3</td><td>0</td><td>0</td><td>0.9</td><td style="color:#c0392b; font-weight:700;">INVALID — sum &lt; 1</td></tr>
+    <tr><td><b>P<sub>d</sub></b></td><td>0.3</td><td>0.5</td><td>0.2</td><td>&minus;0.1</td><td>0.1</td><td>1.0</td><td style="color:#c0392b; font-weight:700;">INVALID — negative probability</td></tr>
+  </table>
+
+  <div class="highlight">
+    <strong>Trap to watch for:</strong> P<sub>d</sub> sums to 1.0, so students who only check the sum will get it wrong. The value &minus;0.1 is not a valid probability. Always check BOTH rules.
+  </div>
+
+  <p>Note: P<sub>b</sub> is valid even though most values are 0. A distribution that assigns all probability to a single outcome (a <em>degenerate distribution</em>) is perfectly valid.</p>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 7: MEDIAN ROBUSTNESS -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>7. Median Robustness — Why Extreme Changes Don't Matter</h2>
+  <p>The median is the value at the <b>middle position</b> of ordered data. Changing values at the extremes (top or bottom) does not affect the middle position.</p>
+
+  <div class="example-box">
+    <div class="label">Classic Exam Problem:</div>
+    A professor grades 140 tests. The median score is 41. She then decides to give the 5 top-scoring students 10 bonus points each.<br><br>
+    <b>What is the new median?</b><br><br>
+    <b>Answer: Still 41.</b> The median of 140 values is the average of the 70th and 71st values. The 5 top-scoring students were ranked at positions 136–140. Adding bonus points to them does not change what's at positions 70 and 71.
+  </div>
+
+  <div class="key-rule">
+    <strong>General principle:</strong><br>
+    &bull; Changing values <b>above the median</b> → median stays the same<br>
+    &bull; Changing values <b>below the median</b> → median stays the same<br>
+    &bull; The <b>mean</b> WILL change in both cases (because mean uses every value in its calculation)<br>
+    &bull; This is why the median is called <em>robust</em> (resistant to outliers)
+  </div>
+
+  <h3>When DOES the median change?</h3>
+  <ul>
+    <li>When you change a value that is AT the median position (or swap values across the median position)</li>
+    <li>When you add or remove observations in a way that shifts the middle position</li>
+  </ul>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 8: APPROPRIATE VISUALIZATIONS -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>8. Choosing the Right Visualization (Exam Classic)</h2>
+  <p>The exam frequently asks: "Is [chart type] appropriate for these variables?" The answer depends entirely on the <b>variable types</b>.</p>
+
+  <table>
+    <tr><th>Variables</th><th>Appropriate Chart</th><th>NOT Appropriate</th></tr>
+    <tr><td>Two <b>numerical</b></td><td>Scatterplot</td><td>—</td></tr>
+    <tr><td>Two <b>categorical</b></td><td>Segmented bar plot, mosaic plot</td><td style="color:#c0392b;"><b>Scatterplot</b> (no!)</td></tr>
+    <tr><td>One numerical, one categorical</td><td>Side-by-side boxplots, grouped histograms</td><td>—</td></tr>
+    <tr><td>One numerical</td><td>Histogram, boxplot, dot plot</td><td>—</td></tr>
+    <tr><td>One categorical</td><td>Bar plot (not histogram!)</td><td>—</td></tr>
+  </table>
+
+  <div class="highlight">
+    <strong>2022 Exam Question:</strong> "Is a scatterplot appropriate for two categorical variables?"<br><br>
+    <b>NO.</b> A scatterplot requires two numerical variables with meaningful coordinates on both axes. Categorical variables have no meaningful numerical position. Use a <b>segmented bar plot</b> or <b>mosaic plot</b> instead.
+  </div>
+
+  <div class="key-rule">
+    <strong>Common exam traps:</strong><br>
+    &bull; <b>Histogram vs bar plot:</b> Histograms are for numerical data (bars touch). Bar plots are for categorical data (bars have gaps).<br>
+    &bull; <b>Pie charts</b> are rarely the correct answer — they're hard to read and only work for one categorical variable with few categories.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 9: QUICK SUMMARY -->
 <!-- ============================================ -->
 <div class="lesson">
   <span class="lesson-tag tag-summary">Cheat Sheet</span>
@@ -257,8 +352,11 @@
     <li>Stratified ≠ Cluster — know the difference.</li>
     <li>Median is robust to outlier changes. Mean is not.</li>
     <li>IQR = Q3 − Q1 = box length.</li>
-    <li>Two categorical variables → NOT a scatterplot.</li>
+    <li>Two categorical variables → NOT a scatterplot. Use segmented bar plot or mosaic plot.</li>
     <li>Explanatory = what causes it. Response = what changes.</li>
+    <li><b>Valid probability distribution:</b> all P between 0 and 1 AND sum = 1. Check BOTH rules.</li>
+    <li><b>Median robustness:</b> changing extreme values (top or bottom) does NOT change the median.</li>
+    <li>Histogram = numerical data (bars touch). Bar plot = categorical data (bars have gaps).</li>
   </ol>
 </div>
 
@@ -373,6 +471,58 @@ b) Is a scatterplot an appropriate visualization? If not, suggest an alternative
     <div class="solution-content">
       <b>a) Explanatory:</b> coffee consumption (cups/day). <b>Response:</b> exam performance (score). It's more plausible that coffee habits influence performance, not the other way around.<br><br>
       <b>b) Yes, a scatterplot is appropriate.</b> Both variables are numerical, and a scatterplot visualizes the relationship between two numerical variables. (If one were categorical, we'd need a different approach.)
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 6 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 6 — Probability Distributions (2023 Exam)</div>
+  <span class="points">Exam-style &bull; 2 pts</span>
+  <div class="exercise-text">A discrete random variable X can take values 1, 2, 3, 4. For each proposed distribution below, state whether it is a valid probability distribution. If not, explain which rule is violated.
+
+Distribution A:  P(1) = 0.25,  P(2) = 0.25,  P(3) = 0.25,  P(4) = 0.25
+Distribution B:  P(1) = 0.4,   P(2) = 0.3,   P(3) = 0.2,   P(4) = 0.2
+Distribution C:  P(1) = 0.5,   P(2) = 0.3,   P(3) = 0.1,   P(4) = -0.1
+Distribution D:  P(1) = 0,     P(2) = 0.6,   P(3) = 0,     P(4) = 0.4</div>
+  <div class="sub-label">Distribution A:</div>
+  <textarea class="answer-area" data-id="P6a" placeholder="Valid or invalid? Why?" style="min-height:50px"></textarea>
+  <div class="sub-label">Distribution B:</div>
+  <textarea class="answer-area" data-id="P6b" placeholder="Valid or invalid? Why?" style="min-height:50px"></textarea>
+  <div class="sub-label">Distribution C:</div>
+  <textarea class="answer-area" data-id="P6c" placeholder="Valid or invalid? Why?" style="min-height:50px"></textarea>
+  <div class="sub-label">Distribution D:</div>
+  <textarea class="answer-area" data-id="P6d" placeholder="Valid or invalid? Why?" style="min-height:50px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>Distribution A: VALID.</b> All values are between 0 and 1, and the sum = 0.25 + 0.25 + 0.25 + 0.25 = 1.0.<br><br>
+      <b>Distribution B: INVALID.</b> All individual values are between 0 and 1, but the sum = 0.4 + 0.3 + 0.2 + 0.2 = 1.1 &ne; 1. The probabilities sum to more than 1.<br><br>
+      <b>Distribution C: INVALID.</b> P(4) = &minus;0.1, which is negative. Probabilities must be &ge; 0. (Note: even though the sum = 0.5 + 0.3 + 0.1 + (&minus;0.1) = 0.8 &ne; 1, the negative value alone already makes it invalid.)<br><br>
+      <b>Distribution D: VALID.</b> All values are between 0 and 1 (0 is allowed!), and the sum = 0 + 0.6 + 0 + 0.4 = 1.0.
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 7 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 7 — Median After Modifying Extreme Values</div>
+  <span class="points">Exam-style &bull; 1 pt</span>
+  <div class="exercise-text">A professor grades 140 exams. The median score is 41 points. She then decides to give the 5 highest-scoring students 10 bonus points each.
+
+a) What is the new median? Justify your answer.
+b) Does the mean change? If yes, by how much?</div>
+  <div class="sub-label">a)</div>
+  <textarea class="answer-area" data-id="P7a" placeholder="Your answer..." style="min-height:60px"></textarea>
+  <div class="sub-label">b)</div>
+  <textarea class="answer-area" data-id="P7b" placeholder="Your answer..." style="min-height:60px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a) The median is still 41.</b> With 140 observations, the median is the average of the 70th and 71st values in sorted order. The 5 highest-scoring students occupy positions 136–140. Adding 10 points to their scores does not affect the values at positions 70 and 71. The median is robust to changes in extreme values.<br><br>
+      <b>b) Yes, the mean increases.</b> The total sum increases by 5 &times; 10 = 50 points. The new mean = old mean + 50/140 &approx; old mean + 0.357 points.
     </div>
   </div>
 </div>
