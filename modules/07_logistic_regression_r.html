@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 7 — Logistic Regression & R Code</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; background: #f5f7fa; color: #1a1a2e; line-height: 1.7; }
+  .container { max-width: 820px; margin: 0 auto; padding: 30px 20px 120px; }
+
+  header { text-align: center; margin-bottom: 35px; padding: 28px; background: linear-gradient(135deg, #4a235a, #7d3c98); color: white; border-radius: 16px; }
+  header h1 { font-size: 24px; margin-bottom: 4px; }
+  header .sub { opacity: 0.8; font-size: 13px; }
+  header .week { display: inline-block; background: rgba(255,255,255,0.2); padding: 3px 12px; border-radius: 20px; font-size: 12px; margin-top: 8px; }
+
+  .lesson { background: white; border-radius: 14px; padding: 24px 26px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid #e0e6ed; }
+  .lesson-tag { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 10px; border-radius: 6px; margin-bottom: 10px; }
+  .tag-concept { background: #eaf2f8; color: #2471a3; }
+  .tag-example { background: #e8f8f5; color: #1e8449; }
+  .tag-practice { background: #fef5e7; color: #d4830a; }
+  .tag-summary { background: #f4ecf7; color: #7d3c98; }
+
+  .lesson h2 { font-size: 18px; color: #1a1a2e; margin-bottom: 12px; }
+  .lesson h3 { font-size: 15px; color: #2c3e50; margin: 16px 0 8px; }
+  .lesson p, .lesson li { font-size: 14px; }
+  .lesson ul, .lesson ol { padding-left: 22px; margin: 8px 0; }
+  .lesson li { margin-bottom: 4px; }
+
+  .formula { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 14px 18px; margin: 12px 0; font-size: 15px; text-align: center; font-family: 'Times New Roman', Georgia, serif; }
+  .formula .label { font-family: -apple-system, sans-serif; font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; text-align: left; }
+
+  .highlight { background: #fef9e7; border-left: 4px solid #f1c40f; padding: 12px 16px; border-radius: 6px; margin: 12px 0; font-size: 14px; }
+  .highlight strong { color: #d4830a; }
+
+  .key-rule { background: #eaf2f8; border-left: 4px solid #2980b9; padding: 12px 16px; border-radius: 6px; margin: 12px 0; font-size: 14px; }
+  .key-rule strong { color: #1a5276; }
+
+  .danger { background: #fdedec; border-left: 4px solid #e74c3c; padding: 12px 16px; border-radius: 6px; margin: 12px 0; font-size: 14px; }
+  .danger strong { color: #c0392b; }
+
+  .example-box { background: #f0faf4; border: 1px solid #a9dfbf; border-radius: 10px; padding: 16px; margin: 12px 0; }
+  .example-box .label { font-weight: 700; color: #1e8449; font-size: 13px; margin-bottom: 6px; }
+
+  .step-box { background: #faf5ff; border: 1px solid #d2b4de; border-radius: 10px; padding: 16px; margin: 12px 0; }
+  .step-box .step { font-weight: 700; color: #6c3483; font-size: 13px; margin-bottom: 2px; }
+
+  table { border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+  th, td { border: 1px solid #d5dbdb; padding: 8px 12px; text-align: center; }
+  th { background: #f0f3f5; font-weight: 600; }
+
+  .vs-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .vs-card { padding: 14px; border-radius: 10px; font-size: 13px; }
+  .vs-left { background: #e8f8f5; border: 1px solid #a3e4d7; }
+  .vs-right { background: #fdedec; border: 1px solid #f5b7b1; }
+  .vs-card strong { display: block; font-size: 14px; margin-bottom: 6px; }
+
+  .exercise { background: white; border-radius: 14px; padding: 22px 24px; margin-bottom: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 2px solid #f0b949; }
+  .exercise-title { font-weight: 700; font-size: 15px; color: #d4830a; margin-bottom: 4px; }
+  .points { display: inline-block; background: #fef5e7; color: #d4830a; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-bottom: 10px; }
+  .exercise-text { font-size: 14px; margin-bottom: 12px; white-space: pre-wrap; }
+  .hint-box { background: #fef9e7; border-left: 3px solid #f39c12; padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 14px; font-family: 'SF Mono', 'Menlo', monospace; white-space: pre; overflow-x: auto; }
+
+  .sub-label { font-weight: 600; font-size: 13px; color: #555; margin: 10px 0 4px 0; }
+  .answer-area { width: 100%; min-height: 80px; border: 2px solid #d5dbdb; border-radius: 8px; padding: 12px; font-size: 14px; font-family: inherit; resize: vertical; transition: border-color 0.2s; }
+  .answer-area:focus { outline: none; border-color: #7d3c98; box-shadow: 0 0 0 3px rgba(125,60,152,0.15); }
+  .answer-area::placeholder { color: #aab7c4; }
+
+  .solution-wrapper { margin-top: 10px; }
+  .reveal-btn { background: #f4ecf7; border: 1px solid #d2b4de; color: #7d3c98; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
+  .reveal-btn:hover { background: #e8daef; }
+  .solution-content { display: none; background: #f0faf4; border: 1px solid #a9dfbf; border-radius: 8px; padding: 14px; margin-top: 8px; font-size: 14px; line-height: 1.8; }
+  .solution-content.visible { display: block; }
+
+  .export-bar { position: sticky; bottom: 0; background: white; border-top: 2px solid #e8ecf1; padding: 14px; text-align: center; z-index: 100; }
+  .export-btn { background: linear-gradient(135deg, #4a235a, #7d3c98); color: white; border: none; padding: 12px 36px; font-size: 15px; font-weight: 700; border-radius: 10px; cursor: pointer; }
+  .export-btn:hover { transform: scale(1.02); }
+  .progress-bar { display: flex; gap: 3px; justify-content: center; margin-top: 10px; }
+  .progress-dot { width: 10px; height: 10px; border-radius: 50%; background: #d5dbdb; transition: background 0.3s; }
+  .progress-dot.filled { background: #27ae60; }
+  #export-result { margin-top: 8px; font-size: 13px; color: #27ae60; display: none; }
+
+  .section-divider { text-align: center; margin: 35px 0 25px; font-size: 13px; color: #aab7c4; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+  .section-divider::before, .section-divider::after { content: ''; display: inline-block; width: 40px; height: 1px; background: #d5dbdb; vertical-align: middle; margin: 0 12px; }
+
+  code { background: #f3f0f7; padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', 'Menlo', monospace; font-size: 13px; color: #4a235a; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<header>
+  <h1>Module 7: Logistic Regression &amp; R Code</h1>
+  <div class="sub">Odds ratios, sensitivity/specificity, ROC &mdash; the final boss</div>
+  <div class="week">Week 1 &bull; Day 7</div>
+</header>
+
+<!-- ============================================ -->
+<!-- LESSON 1: LOGISTIC REGRESSION BASICS -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>1. Logistic Regression Basics</h2>
+
+  <p>When the response variable is <b>binary</b> (0/1, yes/no, survived/died), we can't use linear regression &mdash; predictions would go below 0 or above 1. Instead, we model the <b>log-odds</b>.</p>
+
+  <div class="formula">
+    <div class="label">The Logistic Regression Model</div>
+    logit(p) = log(p / (1 &minus; p)) = &beta;&#8320; + &beta;&#8321;x&#8321; + &beta;&#8322;x&#8322; + ...
+  </div>
+
+  <p>The key insight: we do <b>not</b> model the probability directly. We model the <b>log-odds</b> (also called the logit). The logit can range from &minus;&infin; to +&infin;, so a linear model makes sense.</p>
+
+  <div class="formula">
+    <div class="label">R Code &mdash; Fitting a Logistic Regression</div>
+    <span style="font-family: 'SF Mono', Menlo, monospace; font-size: 13px;">model &lt;- glm(y ~ x1 + x2, data = train, family = binomial)</span>
+  </div>
+
+  <div class="key-rule">
+    <strong>Exam essentials:</strong><br>
+    &bull; <code>glm()</code> instead of <code>lm()</code><br>
+    &bull; <code>family = binomial</code> is the magic argument &mdash; this tells R it's logistic<br>
+    &bull; Coefficients are in <b>log-odds</b>, NOT probabilities<br>
+    &bull; To get odds ratios: exponentiate the coefficients with e<sup>&beta;</sup>
+  </div>
+
+  <div class="danger">
+    <strong>Common exam mistake:</strong> Writing <code>family = "binomial"</code> with quotes. In R, <code>binomial</code> is a function, not a string. Both work in practice, but the exam expects <code>family = binomial</code> without quotes.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 2: ODDS RATIOS -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>2. Odds Ratios &mdash; Interpreting Coefficients</h2>
+
+  <p>In logistic regression, each coefficient &beta; is a <b>log-odds ratio</b>. To get the <b>odds ratio (OR)</b>, exponentiate:</p>
+
+  <div class="formula">
+    <div class="label">Odds Ratio</div>
+    OR = e<sup>&beta;</sup>
+  </div>
+
+  <h3>Interpretation for continuous variables:</h3>
+  <div class="highlight">
+    <strong>"For each one-unit increase in x, the odds of success are multiplied by e<sup>&beta;</sup>."</strong><br><br>
+    Example: &beta; = 0.85 &rarr; OR = e<sup>0.85</sup> = 2.34<br>
+    "For each one-unit increase in x, the odds of success are 2.34 times as large."
+  </div>
+
+  <h3>Interpretation for categorical variables:</h3>
+  <div class="highlight">
+    <strong>"The odds for group A are e<sup>&beta;</sup> times the odds for the reference group."</strong><br><br>
+    Example: &beta;<sub>Sexmale</sub> = &minus;2.71 &rarr; OR = e<sup>&minus;2.71</sup> = 0.067<br>
+    "The odds of survival for males are 0.067 times the odds for females" &mdash; meaning males have <b>much lower</b> odds.
+  </div>
+
+  <h3>Interpretation for interaction terms:</h3>
+  <div class="key-rule">
+    <strong>With interactions, compute the combined slope first!</strong><br>
+    If the model has Pclass + Sexmale + Pclass:Sexmale, then:<br>
+    &bull; Slope of Pclass for <b>females</b>: &beta;<sub>Pclass</sub><br>
+    &bull; Slope of Pclass for <b>males</b>: &beta;<sub>Pclass</sub> + &beta;<sub>Pclass:Sexmale</sub><br>
+    Then compute OR = e<sup>combined slope</sup> for that specific group.
+  </div>
+
+  <div class="danger">
+    <strong>Exam rule:</strong> You MUST describe the odds ratio in words. Writing "OR = 2.34" alone gets zero points. Always say <em>what</em> changes, <em>by how much</em>, and <em>in which direction</em>.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 3: PREDICTION & CLASSIFICATION -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>3. Prediction &amp; Classification</h2>
+
+  <p>After fitting the model, we want to <b>predict</b> the probability of success and <b>classify</b> observations.</p>
+
+  <div class="formula">
+    <div class="label">R Code &mdash; Getting Predicted Probabilities</div>
+    <span style="font-family: 'SF Mono', Menlo, monospace; font-size: 13px;">pred_probs &lt;- predict(model, newdata = test, type = "response")</span>
+  </div>
+
+  <div class="key-rule">
+    <strong>type = "response" is crucial!</strong><br>
+    &bull; <code>type = "response"</code> &rarr; returns <b>probabilities</b> (between 0 and 1)<br>
+    &bull; Without it (default) &rarr; returns <b>log-odds</b> (can be any number)<br>
+    The exam will always want probabilities.
+  </div>
+
+  <h3>From probabilities to classes:</h3>
+  <p>Choose a <b>threshold</b> (usually 0.5). If predicted probability &ge; threshold &rarr; predict class 1. Otherwise &rarr; class 0.</p>
+
+  <h3>Confusion Matrix Layout:</h3>
+  <table style="margin: 12px auto;">
+    <tr><th></th><th>Predicted FALSE</th><th>Predicted TRUE</th></tr>
+    <tr><td><b>Actual 0</b></td><td>TN (True Negative)</td><td>FP (False Positive)</td></tr>
+    <tr><td><b>Actual 1</b></td><td>FN (False Negative)</td><td>TP (True Positive)</td></tr>
+  </table>
+
+  <div class="highlight">
+    <strong>Reading confusion matrices in R output:</strong> The rows are the <b>actual</b> values, columns are the <b>predicted</b> values. But watch out &mdash; exam tables may swap this! Always check the labels carefully.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 4: SENSITIVITY & SPECIFICITY -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>4. Sensitivity &amp; Specificity</h2>
+
+  <div class="vs-box">
+    <div class="vs-card vs-left">
+      <strong>Sensitivity (True Positive Rate)</strong>
+      P(Test + | Condition +)<br><br>
+      <b>= TP / (TP + FN)</b><br><br>
+      "Of all <em>actually positive</em> cases, how many did we correctly predict as positive?"
+    </div>
+    <div class="vs-card vs-right">
+      <strong>Specificity (True Negative Rate)</strong>
+      P(Test &minus; | Condition &minus;)<br><br>
+      <b>= TN / (TN + FP)</b><br><br>
+      "Of all <em>actually negative</em> cases, how many did we correctly predict as negative?"
+    </div>
+  </div>
+
+  <div class="key-rule">
+    <strong>The threshold trade-off:</strong><br>
+    &bull; <b>Higher threshold</b> (e.g., 0.8): harder to classify as positive &rarr; <b>higher specificity, lower sensitivity</b><br>
+    &bull; <b>Lower threshold</b> (e.g., 0.2): easier to classify as positive &rarr; <b>higher sensitivity, lower specificity</b><br><br>
+    Think of it like a strict vs. lenient judge.
+  </div>
+
+  <div class="example-box">
+    <div class="label">Worked example:</div>
+    <table style="margin: 8px 0;">
+      <tr><th></th><th>Predicted FALSE</th><th>Predicted TRUE</th></tr>
+      <tr><td><b>Actual 0</b></td><td>85</td><td>15</td></tr>
+      <tr><td><b>Actual 1</b></td><td>10</td><td>40</td></tr>
+    </table>
+    Sensitivity = TP / (TP + FN) = 40 / (40 + 10) = 40/50 = <b>0.80</b><br>
+    Specificity = TN / (TN + FP) = 85 / (85 + 15) = 85/100 = <b>0.85</b>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 5: ROC CURVE & AUC -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>5. ROC Curve &amp; AUC</h2>
+
+  <p>The <b>ROC curve</b> (Receiver Operating Characteristic) shows how sensitivity and specificity change across <b>all possible thresholds</b>.</p>
+
+  <div class="formula">
+    <div class="label">ROC Curve Axes</div>
+    x-axis: 1 &minus; Specificity (False Positive Rate)<br>
+    y-axis: Sensitivity (True Positive Rate)
+  </div>
+
+  <div class="key-rule">
+    <strong>AUC = Area Under the ROC Curve</strong><br>
+    &bull; AUC = <b>0.5</b> &rarr; random guessing (the diagonal line)<br>
+    &bull; AUC = <b>1.0</b> &rarr; perfect classification<br>
+    &bull; AUC &lt; 0.5 &rarr; worse than random (something is wrong!)<br><br>
+    <b>Rule of thumb:</b><br>
+    0.5&ndash;0.6 = poor &nbsp;|&nbsp; 0.6&ndash;0.7 = fair &nbsp;|&nbsp; 0.7&ndash;0.8 = good &nbsp;|&nbsp; 0.8&ndash;0.9 = very good &nbsp;|&nbsp; 0.9+ = excellent
+  </div>
+
+  <div class="highlight">
+    <strong>Comparing models:</strong> The model with the <b>larger AUC</b> has better predictive accuracy. This is the standard way to compare logistic regression models in the exam.
+  </div>
+
+  <h3>Youden's J Index &mdash; Optimal Threshold</h3>
+  <div class="formula">
+    <div class="label">Youden's J Index</div>
+    J = Sensitivity + Specificity &minus; 1
+  </div>
+  <p>The threshold that maximizes J gives the <b>optimal balance</b> between sensitivity and specificity. This is often asked when the exam gives you a table of thresholds with their sensitivity/specificity values.</p>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 6: AIC BACKWARD SELECTION -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>6. AIC Backward Selection for Logistic</h2>
+
+  <p>Same principle as linear regression: start with the full model, remove variables one at a time, keep the model with the <b>lowest AIC</b>.</p>
+
+  <div class="key-rule">
+    <strong>Key differences from linear regression:</strong><br>
+    &bull; We use <b>AIC</b>, NOT adjusted R&sup2; (logistic regression has no R&sup2;)<br>
+    &bull; The <code>&lt;none&gt;</code> row in the table means "remove nothing" (= keep the current model)<br>
+    &bull; If <code>&lt;none&gt;</code> has the lowest AIC &rarr; <b>stop</b>, the current model is the best<br>
+    &bull; Otherwise, remove the variable whose removal gives the lowest AIC
+  </div>
+
+  <div class="danger">
+    <strong>Exam trap: permuted rows!</strong><br>
+    The exam often shuffles the rows in the AIC table so they're NOT in order. Don't just pick the first or last row &mdash; scan ALL rows and find the one with the smallest AIC value.
+  </div>
+
+  <div class="example-box">
+    <div class="label">Example AIC output (rows scrambled):</div>
+    <table style="margin: 8px 0;">
+      <tr><th>Remove</th><th>AIC</th></tr>
+      <tr><td>x3</td><td>1328.15</td></tr>
+      <tr><td>&lt;none&gt;</td><td>1329.96</td></tr>
+      <tr><td>x1</td><td>1331.42</td></tr>
+      <tr><td>x2</td><td>1345.80</td></tr>
+    </table>
+    Current AIC = 1329.96 (&lt;none&gt; row).<br>
+    Removing x3 gives AIC = 1328.15 &lt; 1329.96.<br>
+    &rarr; <b>Remove x3</b> (it gives the lowest AIC).
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 7: INFER WORKFLOW & R CODE SUMMARY -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-summary">R Code Summary</span>
+  <h2>7. Infer Workflow &amp; R Code Summary</h2>
+
+  <h3>The infer pipeline:</h3>
+  <div class="formula">
+    <div class="label">Infer Workflow</div>
+    <span style="font-family: 'SF Mono', Menlo, monospace; font-size: 13px;">data |&gt; specify() |&gt; hypothesize() |&gt; generate() |&gt; calculate()</span>
+  </div>
+
+  <h3>Common patterns:</h3>
+  <div class="vs-box">
+    <div class="vs-card vs-left">
+      <strong>Single proportion / mean</strong>
+      <code>null = "point"</code><br>
+      <code>type = "draw"</code><br><br>
+      Testing if one parameter equals a specific value.
+    </div>
+    <div class="vs-card vs-right">
+      <strong>Comparing groups</strong>
+      <code>null = "independence"</code><br>
+      <code>type = "permute"</code><br><br>
+      Testing if two variables are related.
+    </div>
+  </div>
+
+  <h3>Complete logistic regression workflow in R:</h3>
+  <div class="step-box">
+    <div class="step">Step 1: Fit the model</div>
+    <code>model &lt;- glm(y ~ x1 + x2, data = train, family = binomial)</code>
+  </div>
+  <div class="step-box">
+    <div class="step">Step 2: View coefficients</div>
+    <code>summary(model)</code> &mdash; gives estimates, std errors, p-values
+  </div>
+  <div class="step-box">
+    <div class="step">Step 3: Get predicted probabilities</div>
+    <code>predict(model, newdata = test, type = "response")</code>
+  </div>
+  <div class="step-box">
+    <div class="step">Step 4: Classify</div>
+    <code>pred_class &lt;- ifelse(pred_probs &gt;= 0.5, 1, 0)</code>
+  </div>
+  <div class="step-box">
+    <div class="step">Step 5: Confusion matrix</div>
+    <code>table(actual, predicted)</code>
+  </div>
+  <div class="step-box">
+    <div class="step">Step 6: AIC-based selection</div>
+    <code>step(model, direction = "backward")</code>
+  </div>
+
+  <div class="key-rule">
+    <strong>Full module cheat sheet:</strong><br>
+    &bull; <code>glm(y ~ ., family = binomial)</code> &mdash; logistic regression<br>
+    &bull; OR = e<sup>&beta;</sup> &mdash; always interpret in words<br>
+    &bull; <code>predict(..., type = "response")</code> &mdash; probabilities<br>
+    &bull; Sensitivity = TP / (TP + FN) &mdash; "catch rate" for positives<br>
+    &bull; Specificity = TN / (TN + FP) &mdash; "catch rate" for negatives<br>
+    &bull; AUC: bigger = better, 0.5 = random, 1 = perfect<br>
+    &bull; Youden's J = Sens + Spec &minus; 1 &mdash; optimal threshold<br>
+    &bull; AIC backward: remove variable giving lowest AIC, stop when &lt;none&gt; wins
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- PRACTICE EXERCISES -->
+<!-- ============================================ -->
+<div class="section-divider">Now You Try</div>
+
+<!-- EXERCISE 1 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 1 &mdash; glm Code + Odds Ratio (Titanic)</div>
+  <span class="points">3 pts &bull; 2022 Exam</span>
+  <div class="exercise-text">You are modeling survival on the Titanic using all available predictors.
+
+a) Complete the code to fit a logistic regression:
+   model_full &lt;- glm(Survived ~ ., data = titanic_train, ___)
+
+b) The coefficient table shows Sexmale = &minus;2.71. Interpret this coefficient in terms of the odds ratio. You must describe the meaning in words.</div>
+  <div class="sub-label">a) Complete the code</div>
+  <textarea class="answer-area" data-id="E1a" placeholder="What goes in the blank?"></textarea>
+  <div class="sub-label">b) Interpret Sexmale = -2.71</div>
+  <textarea class="answer-area" data-id="E1b" placeholder="Compute the odds ratio and interpret in a sentence..." style="min-height:120px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a)</b> <code>model_full &lt;- glm(Survived ~ ., data = titanic_train, family = binomial)</code><br><br>
+      The blank is <code>family = binomial</code>. This tells <code>glm()</code> to use logistic regression (binomial family with logit link).<br><br>
+
+      <b>b)</b> OR = e<sup>&minus;2.71</sup> = <b>0.0667</b><br><br>
+      <b>Interpretation:</b> "The odds of survival for male passengers are 0.067 times the odds of survival for female passengers (the reference category), holding all other variables constant."<br><br>
+      In other words, males had <b>dramatically lower odds</b> of survival &mdash; about 93.3% lower than females. This reflects the "women and children first" policy.
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 2 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 2 &mdash; Sensitivity from Confusion Matrix</div>
+  <span class="points">2 pts &bull; 2022 Exam</span>
+  <div class="exercise-text">Given the following confusion matrix (rows = actual, columns = predicted):
+</div>
+  <table style="margin: 0 0 12px 0;">
+    <tr><th></th><th>FALSE</th><th>TRUE</th></tr>
+    <tr><td><b>0</b></td><td>58</td><td>12</td></tr>
+    <tr><td><b>1</b></td><td>18</td><td>55</td></tr>
+  </table>
+  <div class="exercise-text">Compute the sensitivity of this model.</div>
+  <textarea class="answer-area" data-id="E2" placeholder="Identify TP and FN, then compute sensitivity..." style="min-height:100px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      First, identify the cells from the confusion matrix:<br>
+      &bull; Row "1" (actual positives): FN = 18, TP = 55<br>
+      &bull; Row "0" (actual negatives): TN = 58, FP = 12<br><br>
+
+      <b>Sensitivity = TP / (TP + FN)</b><br>
+      Sensitivity = 55 / (55 + 18)<br>
+      Sensitivity = 55 / 73<br>
+      Sensitivity = <b>0.7534 &asymp; 75.3%</b><br><br>
+
+      "Of the 73 passengers who actually survived (class 1), the model correctly predicted 55 of them as survivors."
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 3 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 3 &mdash; ROC/AUC Model Comparison</div>
+  <span class="points">2 pts &bull; 2022 Exam</span>
+  <div class="exercise-text">The full model has AUC = 0.8818. The reduced model has AUC = 0.8641.
+
+Which model has better predictive accuracy? Justify your answer.</div>
+  <textarea class="answer-area" data-id="E3" placeholder="Compare the AUC values and explain..." style="min-height:100px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      The <b>full model</b> has better predictive accuracy because it has a <b>higher AUC</b> (0.8818 &gt; 0.8641).<br><br>
+
+      <b>Justification:</b> The AUC (Area Under the ROC Curve) measures how well a model discriminates between positive and negative cases across all possible classification thresholds. A higher AUC indicates better overall predictive performance.<br><br>
+
+      Both models have "very good" predictive accuracy (AUC &gt; 0.8), but the full model's AUC of 0.8818 is slightly better than the reduced model's 0.8641. The full model is better at distinguishing between survivors and non-survivors across all threshold choices.
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 4 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 4 &mdash; Logistic Regression with Interaction</div>
+  <span class="points">4 pts &bull; 2023 Retake</span>
+  <div class="exercise-text">Titanic survival model with interaction: Pclass, Sex, Age, SibSp, and an interaction between Pclass and Sex.
+
+Coefficients:
+  Intercept = 8.50
+  Pclass = &minus;2.43
+  Sexmale = &minus;6.22
+  Age = &minus;0.0466
+  SibSp = &minus;0.355
+  Pclass:Sexmale = 1.52
+
+a) Complete the glm code to fit this model with the interaction term.
+b) Write down the model equation specifically for a male passenger. Simplify.
+c) Interpret the Pclass slope for male passengers in terms of odds ratio.
+d) Given sensitivity = 0.72 and the test set contains 50 actual survivals. Compute the number of true positives.</div>
+  <div class="sub-label">a) glm code with interaction</div>
+  <textarea class="answer-area" data-id="E4a" placeholder="glm(Survived ~ ..., data = ..., family = ...)"></textarea>
+  <div class="sub-label">b) Model for males</div>
+  <textarea class="answer-area" data-id="E4b" placeholder="Substitute Sexmale = 1 and simplify..." style="min-height:120px"></textarea>
+  <div class="sub-label">c) Odds ratio for Pclass (males)</div>
+  <textarea class="answer-area" data-id="E4c" placeholder="Compute combined slope, then OR, then interpret..." style="min-height:100px"></textarea>
+  <div class="sub-label">d) True positives</div>
+  <textarea class="answer-area" data-id="E4d" placeholder="Use the sensitivity formula..."></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a)</b> <code>glm(Survived ~ Pclass * Sex + Age + SibSp, data = titanic_train, family = binomial)</code><br><br>
+      Note: <code>Pclass * Sex</code> in R automatically includes both main effects (Pclass, Sex) AND their interaction (Pclass:Sex). You could also write <code>Pclass + Sex + Age + SibSp + Pclass:Sex</code>.<br><br>
+
+      <b>b)</b> For males, Sexmale = 1, so substitute into the full model:<br>
+      logit(p) = 8.50 &minus; 2.43&middot;Pclass &minus; 6.22&middot;(1) &minus; 0.0466&middot;Age &minus; 0.355&middot;SibSp + 1.52&middot;Pclass&middot;(1)<br><br>
+      Combine the Pclass terms: &minus;2.43 + 1.52 = &minus;0.91<br>
+      Combine constants: 8.50 &minus; 6.22 = 2.28<br><br>
+      <b>logit(p) = 2.28 &minus; 0.91&middot;Pclass &minus; 0.0466&middot;Age &minus; 0.355&middot;SibSp</b><br><br>
+
+      <b>c)</b> The combined Pclass slope for males = &minus;2.43 + 1.52 = <b>&minus;0.91</b><br>
+      OR = e<sup>&minus;0.91</sup> = <b>0.4025</b><br><br>
+      <b>Interpretation:</b> "For male passengers, each one-unit increase in Pclass (i.e., moving from 1st to 2nd class, or from 2nd to 3rd class) multiplies the odds of survival by 0.40. In other words, moving one class lower reduces the odds of survival by about 60%, holding age and SibSp constant."<br><br>
+
+      <b>d)</b> Sensitivity = TP / (TP + FN), and TP + FN = total actual positives = 50.<br>
+      0.72 = TP / 50<br>
+      TP = 0.72 &times; 50 = <b>36</b><br><br>
+      The model correctly predicted 36 out of the 50 actual survivors.
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 5 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 5 &mdash; AIC Backward Selection + Odds Ratio Interpretation</div>
+  <span class="points">3 pts &bull; 2023 Exam</span>
+  <div class="exercise-text">You are building a logistic regression model to predict whether an email is spam. The current model has AIC = 1329.96.
+
+The AIC backward selection output (rows permuted):
+</div>
+  <table style="margin: 0 0 12px 0;">
+    <tr><th>Remove</th><th>AIC</th></tr>
+    <tr><td>to_multiple</td><td>1332.81</td></tr>
+    <tr><td>image</td><td>1328.07</td></tr>
+    <tr><td>&lt;none&gt;</td><td>1329.96</td></tr>
+    <tr><td>cc</td><td>1329.55</td></tr>
+    <tr><td>dollar</td><td>1340.22</td></tr>
+  </table>
+  <div class="exercise-text">a) Which variable should be removed in this step? Justify.
+
+b) The model includes the following coefficients:
+   line_breaks: estimate = &minus;0.00436
+   re_subj: estimate = &minus;3.03
+   Interpret both in terms of odds ratios.</div>
+  <div class="sub-label">a) Which variable to remove?</div>
+  <textarea class="answer-area" data-id="E5a" placeholder="Compare AIC values..." style="min-height:80px"></textarea>
+  <div class="sub-label">b) Interpret both odds ratios</div>
+  <textarea class="answer-area" data-id="E5b" placeholder="Compute e^β for each and interpret in words..." style="min-height:160px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a)</b> Remove <b>image</b>.<br><br>
+      The current model AIC = 1329.96 (the &lt;none&gt; row). Removing "image" gives AIC = 1328.07, which is the <b>lowest value</b> in the table and lower than the current model. Since a lower AIC indicates a better model, we remove "image."<br><br>
+      Note: removing "cc" (AIC = 1329.55) would also improve the model, but "image" gives the lowest AIC, so it is removed first.<br><br>
+
+      <b>b) line_breaks:</b> &beta; = &minus;0.00436<br>
+      OR = e<sup>&minus;0.00436</sup> = <b>0.9956</b><br>
+      "For each additional line break in the email, the odds of the email being spam are multiplied by 0.9956, holding all other variables constant." In practice, each additional line break decreases the odds of spam by about 0.44% &mdash; a very small effect per line break.<br><br>
+
+      <b>re_subj:</b> &beta; = &minus;3.03<br>
+      OR = e<sup>&minus;3.03</sup> = <b>0.0482</b><br>
+      "Emails with 'Re:' in the subject line have odds of being spam that are 0.048 times the odds for emails without 'Re:' in the subject, holding all other variables constant." In other words, having "Re:" in the subject reduces the odds of being spam by about 95.2%. This makes sense &mdash; reply emails are rarely spam.
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 6 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 6 &mdash; Sensitivity + Specificity from Confusion Matrix</div>
+  <span class="points">2 pts &bull; 2023 Exam</span>
+  <div class="exercise-text">Spam prediction confusion matrix (rows = actual, columns = predicted):
+</div>
+  <table style="margin: 0 0 12px 0;">
+    <tr><th></th><th>FALSE</th><th>TRUE</th></tr>
+    <tr><td><b>FALSE</b></td><td>706</td><td>64</td></tr>
+    <tr><td><b>TRUE</b></td><td>5</td><td>10</td></tr>
+  </table>
+  <div class="exercise-text">Compute both sensitivity and specificity.</div>
+  <textarea class="answer-area" data-id="E6" placeholder="Identify TP, FP, TN, FN and compute both metrics..." style="min-height:140px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      First, map the confusion matrix to our labels:<br>
+      &bull; Row FALSE = actual negatives (not spam), Row TRUE = actual positives (spam)<br>
+      &bull; Col FALSE = predicted negative, Col TRUE = predicted positive<br><br>
+
+      <table style="margin: 8px 0;">
+        <tr><th></th><th>Pred FALSE</th><th>Pred TRUE</th></tr>
+        <tr><td><b>Actual FALSE</b></td><td>TN = 706</td><td>FP = 64</td></tr>
+        <tr><td><b>Actual TRUE</b></td><td>FN = 5</td><td>TP = 10</td></tr>
+      </table><br>
+
+      <b>Sensitivity</b> = TP / (TP + FN) = 10 / (10 + 5) = 10/15 = <b>0.6667 &asymp; 66.7%</b><br><br>
+      "Of the 15 actual spam emails, the model correctly identified 10."<br><br>
+
+      <b>Specificity</b> = TN / (TN + FP) = 706 / (706 + 64) = 706/770 = <b>0.9169 &asymp; 91.7%</b><br><br>
+      "Of the 770 non-spam emails, the model correctly identified 706."<br><br>
+
+      <b>Note:</b> This model has high specificity but mediocre sensitivity &mdash; it's good at recognizing non-spam but misses about a third of actual spam emails. This is typical when the classes are imbalanced (770 non-spam vs. 15 spam).
+    </div>
+  </div>
+</div>
+
+</div> <!-- end container -->
+
+<!-- EXPORT BAR -->
+<div class="export-bar">
+  <button class="export-btn" onclick="exportAnswers()">Export My Answers to Claude</button>
+  <div class="progress-bar" id="progress"></div>
+  <div id="export-result"></div>
+</div>
+
+<script>
+function toggleSolution(btn) {
+  const content = btn.nextElementSibling;
+  content.classList.toggle('visible');
+  btn.textContent = content.classList.contains('visible') ? 'Hide Solution' : 'Show Solution';
+}
+
+const areas = document.querySelectorAll('.answer-area');
+const progressDiv = document.getElementById('progress');
+areas.forEach(() => { let d = document.createElement('div'); d.className = 'progress-dot'; progressDiv.appendChild(d); });
+
+function updateProgress() {
+  const dots = progressDiv.querySelectorAll('.progress-dot');
+  areas.forEach((a, i) => { dots[i].className = a.value.trim().length > 3 ? 'progress-dot filled' : 'progress-dot'; });
+}
+areas.forEach(a => a.addEventListener('input', updateProgress));
+
+function autoSave() { let d = {}; areas.forEach(a => { d[a.getAttribute('data-id')] = a.value; }); localStorage.setItem('module07', JSON.stringify(d)); }
+function autoLoad() { let d = JSON.parse(localStorage.getItem('module07') || '{}'); areas.forEach(a => { let s = d[a.getAttribute('data-id')]; if (s) a.value = s; }); updateProgress(); }
+areas.forEach(a => a.addEventListener('input', autoSave));
+autoLoad();
+
+function exportAnswers() {
+  let r = { module: "Module 7 — Logistic Regression & R Code", timestamp: new Date().toISOString(), answers: {} };
+  areas.forEach(a => { let v = a.value.trim(); if (v) r.answers[a.getAttribute('data-id')] = v; });
+  let j = JSON.stringify(r, null, 2);
+  navigator.clipboard.writeText(j).then(() => {
+    document.getElementById('export-result').style.display = 'block';
+    document.getElementById('export-result').textContent = `Copied ${Object.keys(r.answers).length} answers! Paste to Claude with Cmd+V.`;
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 6 — Linear Regression</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; background: #f5f7fa; color: #1a1a2e; line-height: 1.7; }
+  .container { max-width: 820px; margin: 0 auto; padding: 30px 20px 120px; }
+
+  header { text-align: center; margin-bottom: 35px; padding: 28px; background: linear-gradient(135deg, #148f77, #1abc9c); color: white; border-radius: 16px; }
+  header h1 { font-size: 24px; margin-bottom: 4px; }
+  header .sub { opacity: 0.8; font-size: 13px; }
+  header .week { display: inline-block; background: rgba(255,255,255,0.2); padding: 3px 12px; border-radius: 20px; font-size: 12px; margin-top: 8px; }
+
+  .lesson { background: white; border-radius: 14px; padding: 24px 26px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid #e0e6ed; }
+  .lesson-tag { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 10px; border-radius: 6px; margin-bottom: 10px; }
+  .tag-concept { background: #eaf2f8; color: #2471a3; }
+  .tag-example { background: #e8f8f5; color: #1e8449; }
+  .tag-practice { background: #fef5e7; color: #d4830a; }
+  .tag-summary { background: #f4ecf7; color: #7d3c98; }
+
+  .lesson h2 { font-size: 18px; color: #1a1a2e; margin-bottom: 12px; }
+  .lesson h3 { font-size: 15px; color: #2c3e50; margin: 16px 0 8px; }
+  .lesson p, .lesson li { font-size: 14px; }
+  .lesson ul, .lesson ol { padding-left: 22px; margin: 8px 0; }
+  .lesson li { margin-bottom: 4px; }
+
+  .formula { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 14px 18px; margin: 12px 0; font-size: 15px; text-align: center; font-family: 'Times New Roman', Georgia, serif; }
+  .formula .label { font-family: -apple-system, sans-serif; font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; text-align: left; }
+
+  .highlight { background: #fef9e7; border-left: 4px solid #f1c40f; padding: 12px 16px; border-radius: 6px; margin: 12px 0; font-size: 14px; }
+  .highlight strong { color: #d4830a; }
+
+  .key-rule { background: #eaf2f8; border-left: 4px solid #2980b9; padding: 12px 16px; border-radius: 6px; margin: 12px 0; font-size: 14px; }
+  .key-rule strong { color: #1a5276; }
+
+  .danger { background: #fdedec; border-left: 4px solid #e74c3c; padding: 12px 16px; border-radius: 6px; margin: 12px 0; font-size: 14px; }
+  .danger strong { color: #c0392b; }
+
+  .example-box { background: #f0faf4; border: 1px solid #a9dfbf; border-radius: 10px; padding: 16px; margin: 12px 0; }
+  .example-box .label { font-weight: 700; color: #1e8449; font-size: 13px; margin-bottom: 6px; }
+
+  .step-box { background: #f0faf8; border: 1px solid #a3e4d7; border-radius: 10px; padding: 16px; margin: 12px 0; }
+  .step-box .step { font-weight: 700; color: #148f77; font-size: 13px; margin-bottom: 2px; }
+
+  table { border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+  th, td { border: 1px solid #d5dbdb; padding: 8px 12px; text-align: center; }
+  th { background: #f0f3f5; font-weight: 600; }
+
+  .vs-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .vs-card { padding: 14px; border-radius: 10px; font-size: 13px; }
+  .vs-left { background: #e8f8f5; border: 1px solid #a3e4d7; }
+  .vs-right { background: #fdedec; border: 1px solid #f5b7b1; }
+  .vs-card strong { display: block; font-size: 14px; margin-bottom: 6px; }
+
+  .exercise { background: white; border-radius: 14px; padding: 22px 24px; margin-bottom: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 2px solid #f0b949; }
+  .exercise-title { font-weight: 700; font-size: 15px; color: #d4830a; margin-bottom: 4px; }
+  .points { display: inline-block; background: #fef5e7; color: #d4830a; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-bottom: 10px; }
+  .exercise-text { font-size: 14px; margin-bottom: 12px; white-space: pre-wrap; }
+  .hint-box { background: #fef9e7; border-left: 3px solid #f39c12; padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 14px; font-family: 'SF Mono', 'Menlo', monospace; white-space: pre; overflow-x: auto; }
+
+  .sub-label { font-weight: 600; font-size: 13px; color: #555; margin: 10px 0 4px 0; }
+  .answer-area { width: 100%; min-height: 80px; border: 2px solid #d5dbdb; border-radius: 8px; padding: 12px; font-size: 14px; font-family: inherit; resize: vertical; transition: border-color 0.2s; }
+  .answer-area:focus { outline: none; border-color: #148f77; box-shadow: 0 0 0 3px rgba(20,143,119,0.15); }
+  .answer-area::placeholder { color: #aab7c4; }
+
+  .solution-wrapper { margin-top: 10px; }
+  .reveal-btn { background: #e8f8f5; border: 1px solid #a3e4d7; color: #148f77; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
+  .reveal-btn:hover { background: #d5f5e3; }
+  .solution-content { display: none; background: #f0faf4; border: 1px solid #a9dfbf; border-radius: 8px; padding: 14px; margin-top: 8px; font-size: 14px; line-height: 1.8; }
+  .solution-content.visible { display: block; }
+
+  .export-bar { position: sticky; bottom: 0; background: white; border-top: 2px solid #e8ecf1; padding: 14px; text-align: center; z-index: 100; }
+  .export-btn { background: linear-gradient(135deg, #148f77, #1abc9c); color: white; border: none; padding: 12px 36px; font-size: 15px; font-weight: 700; border-radius: 10px; cursor: pointer; }
+  .export-btn:hover { transform: scale(1.02); }
+  .progress-bar { display: flex; gap: 3px; justify-content: center; margin-top: 10px; }
+  .progress-dot { width: 10px; height: 10px; border-radius: 50%; background: #d5dbdb; transition: background 0.3s; }
+  .progress-dot.filled { background: #27ae60; }
+  #export-result { margin-top: 8px; font-size: 13px; color: #27ae60; display: none; }
+
+  .section-divider { text-align: center; margin: 35px 0 25px; font-size: 13px; color: #aab7c4; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+  .section-divider::before, .section-divider::after { content: ''; display: inline-block; width: 40px; height: 1px; background: #d5dbdb; vertical-align: middle; margin: 0 12px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<header>
+  <h1>Module 6: Linear Regression</h1>
+  <div class="sub">Interpret slopes, R&sup2;, AIC backward elimination &mdash; every exam</div>
+  <div class="week">Week 1 &bull; Day 6</div>
+</header>
+
+<!-- ============================================ -->
+<!-- LESSON 1: SIMPLE LINEAR REGRESSION -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>1. Simple Linear Regression</h2>
+
+  <p>We fit a straight line through data to predict a response variable y from one predictor x.</p>
+
+  <div class="formula">
+    <div class="label">Simple Linear Regression Model</div>
+    &#375; = b&#8320; + b&#8321;x
+  </div>
+
+  <ul>
+    <li><b>b&#8320; (intercept):</b> predicted value of y when x = 0</li>
+    <li><b>b&#8321; (slope):</b> for each 1-unit increase in x, y changes by b&#8321; on average</li>
+  </ul>
+
+  <div class="formula">
+    <div class="label">Residual</div>
+    Residual = y &minus; &#375; = observed &minus; predicted
+  </div>
+
+  <p>A positive residual means the model <em>underestimated</em>; a negative residual means it <em>overestimated</em>.</p>
+
+  <div class="formula">
+    <div class="label">Slope from correlation</div>
+    b&#8321; = r &middot; (s<sub>y</sub> / s<sub>x</sub>)
+  </div>
+
+  <div class="key-rule">
+    <strong>Reading R output:</strong> In the <code>Coefficients</code> table, the <code>Estimate</code> column gives b&#8320; (Intercept row) and b&#8321; (predictor row). The <code>Std. Error</code> column gives SE<sub>b</sub>. The <code>t value</code> column is Estimate / Std. Error.
+  </div>
+
+  <div class="highlight">
+    <strong>Interpretation template:</strong> "For each additional [unit of x], we expect [y] to [increase/decrease] by [|b&#8321;|] [units of y], on average."
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 2: MULTIPLE LINEAR REGRESSION -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>2. Multiple Linear Regression</h2>
+
+  <p>With multiple predictors, the model extends to:</p>
+
+  <div class="formula">
+    <div class="label">Multiple Linear Regression</div>
+    &#375; = b&#8320; + b&#8321;x&#8321; + b&#8322;x&#8322; + ... + b<sub>k</sub>x<sub>k</sub>
+  </div>
+
+  <div class="key-rule">
+    <strong>"All else being equal" interpretation:</strong><br>
+    Each slope b<sub>j</sub> tells you the effect of x<sub>j</sub> on y <b>while holding all other predictors constant</b>.<br><br>
+    Template: "All else being equal, for each 1-unit increase in x<sub>j</sub>, y changes by b<sub>j</sub> on average."
+  </div>
+
+  <h3>Categorical Predictors (Indicator Variables)</h3>
+  <p>R automatically creates <b>indicator (dummy) variables</b> for categorical predictors. For example, if <code>Sex</code> has levels Female and Male:</p>
+  <ul>
+    <li><b>SexM = 1</b> if the observation is male, <b>0</b> if female</li>
+    <li>Female is the <em>reference category</em> (absorbed into the intercept)</li>
+  </ul>
+
+  <div class="example-box">
+    <div class="label">Example with indicator variable:</div>
+    &#375; = 12.5 + 3.2 &middot; Weight &minus; 1.8 &middot; SexM<br><br>
+    For <b>females</b> (SexM = 0): &#375; = 12.5 + 3.2 &middot; Weight<br>
+    For <b>males</b> (SexM = 1): &#375; = (12.5 &minus; 1.8) + 3.2 &middot; Weight = 10.7 + 3.2 &middot; Weight<br><br>
+    Interpretation of SexM coefficient: "All else being equal, males have a predicted y that is 1.8 units <b>lower</b> than females."
+  </div>
+
+  <h3>Interaction Terms</h3>
+  <p>An interaction term like <code>Bwt:SexM</code> means the <b>slope of Bwt differs between males and females</b>.</p>
+
+  <div class="formula">
+    <div class="label">Model with interaction</div>
+    &#375; = b&#8320; + b&#8321;&middot;Bwt + b&#8322;&middot;SexM + b&#8323;&middot;Bwt:SexM
+  </div>
+
+  <p>The interaction coefficient b&#8323; tells you <em>how much steeper (or flatter) the slope is</em> for the non-reference category.</p>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 3: R² AND ADJUSTED R² -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>3. R&sup2; and Adjusted R&sup2;</h2>
+
+  <p><b>R&sup2;</b> measures the proportion of variance in y explained by the model. Ranges from 0 to 1.</p>
+
+  <div class="formula">
+    <div class="label">R&sup2; (Coefficient of Determination)</div>
+    R&sup2; = 1 &minus; &Sigma;(y<sub>i</sub> &minus; &#375;<sub>i</sub>)&sup2; / &Sigma;(y<sub>i</sub> &minus; &#x233;)&sup2; = 1 &minus; SS<sub>Res</sub> / SS<sub>Tot</sub>
+  </div>
+
+  <div class="highlight">
+    <strong>For simple regression:</strong> R&sup2; = r&sup2; (the square of the correlation coefficient).
+  </div>
+
+  <p>Problem: R&sup2; <em>always increases</em> when you add more predictors, even useless ones. Solution:</p>
+
+  <div class="formula">
+    <div class="label">Adjusted R&sup2;</div>
+    R&sup2;<sub>adj</sub> = 1 &minus; [&Sigma;(y<sub>i</sub> &minus; &#375;<sub>i</sub>)&sup2; / (n &minus; k &minus; 1)] / [&Sigma;(y<sub>i</sub> &minus; &#375;<sub>i</sub>)&sup2; / (n &minus; 1)]
+  </div>
+
+  <p>Equivalently:</p>
+  <div class="formula">
+    <div class="label">Adjusted R&sup2; from residual standard error</div>
+    R&sup2;<sub>adj</sub> = 1 &minus; (Residual SE)&sup2; / Var(y)
+  </div>
+
+  <div class="key-rule">
+    <strong>Computing R&sup2;<sub>adj</sub> from R output:</strong><br>
+    1. Find <code>Residual standard error</code> in the output (e.g., 15.72)<br>
+    2. Compute Var(y) separately (e.g., from <code>var(data$y)</code>)<br>
+    3. R&sup2;<sub>adj</sub> = 1 &minus; (15.72)&sup2; / Var(y)
+  </div>
+
+  <div class="vs-box">
+    <div class="vs-card vs-left">
+      <strong>R&sup2;</strong>
+      Always increases with more predictors.<br>
+      Use for simple regression or reporting.
+    </div>
+    <div class="vs-card vs-right">
+      <strong>R&sup2;<sub>adj</sub></strong>
+      Penalizes for extra predictors.<br>
+      Use for comparing models with different numbers of predictors.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 4: HYPOTHESIS TESTING FOR COEFFICIENTS -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>4. Hypothesis Testing for Coefficients</h2>
+
+  <p>For each predictor, R tests whether the coefficient is significantly different from zero:</p>
+
+  <div class="formula">
+    <div class="label">Hypotheses</div>
+    H&#8320;: &beta;<sub>j</sub> = 0 &nbsp;&nbsp;(predictor has no linear relationship with y)<br>
+    H<sub>A</sub>: &beta;<sub>j</sub> &ne; 0 &nbsp;&nbsp;(predictor does have a linear relationship with y)
+  </div>
+
+  <div class="formula">
+    <div class="label">Test statistic</div>
+    T = (b<sub>j</sub> &minus; 0) / SE<sub>b<sub>j</sub></sub> &nbsp;&nbsp;&nbsp; with df = n &minus; k &minus; 1
+  </div>
+
+  <p>where k = number of predictors in the model.</p>
+
+  <div class="formula">
+    <div class="label">Confidence Interval for a coefficient</div>
+    b<sub>j</sub> &plusmn; t* &middot; SE<sub>b<sub>j</sub></sub>
+  </div>
+
+  <div class="key-rule">
+    <strong>Decision rules (equivalent):</strong><br>
+    &bull; If p-value &lt; &alpha;, reject H&#8320; &rarr; predictor is significant<br>
+    &bull; If the CI for &beta;<sub>j</sub> does NOT contain 0, the predictor is significant<br>
+    &bull; If |T| &gt; t*<sub>crit</sub>, reject H&#8320;
+  </div>
+
+  <div class="danger">
+    <strong>Exam trap:</strong> The degrees of freedom for the t-test is df = n &minus; k &minus; 1 (residual df), NOT n &minus; 1. Read the residual df from the R output line: <code>Residual standard error: XX on YY degrees of freedom</code>. YY is your df.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 5: AIC BACKWARD ELIMINATION -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>5. AIC Backward Elimination</h2>
+
+  <p>AIC (Akaike Information Criterion) balances model fit against complexity:</p>
+
+  <div class="formula">
+    <div class="label">AIC (simplified form for regression)</div>
+    AIC = constant + n &middot; ln(RSS / n) + 2k
+  </div>
+
+  <p>Lower AIC = better model. The <code>step()</code> function in R performs backward elimination automatically.</p>
+
+  <h3>How backward elimination works:</h3>
+  <ol>
+    <li>Start with the full model (all predictors). Note the current AIC.</li>
+    <li>Try removing each variable one at a time. For each removal, compute the new AIC.</li>
+    <li><b>Remove the variable whose removal gives the LOWEST AIC.</b></li>
+    <li>Repeat until removing any remaining variable would <b>increase</b> AIC.</li>
+    <li>The <code>&lt;none&gt;</code> row shows the AIC of keeping all remaining variables.</li>
+  </ol>
+
+  <div class="danger">
+    <strong>EXAM TRAP:</strong> In the <code>step()</code> output, the rows are often <b>permuted/shuffled</b> (not in the order you might expect). You must scan ALL rows to find the one with the minimum AIC value. Do NOT just pick the first or last row!
+  </div>
+
+  <div class="example-box">
+    <div class="label">Reading step() output:</div>
+    <table style="width:100%">
+      <tr><th>Remove</th><th>Df</th><th>AIC</th></tr>
+      <tr><td>&lt;none&gt;</td><td></td><td>4415.11</td></tr>
+      <tr><td>&minus; age</td><td>1</td><td>4413.35</td></tr>
+      <tr><td>&minus; height</td><td>1</td><td>4418.22</td></tr>
+      <tr><td>&minus; parity</td><td>1</td><td>4414.80</td></tr>
+    </table>
+    <br>
+    &lt;none&gt; AIC = 4415.11 (keeping everything).<br>
+    Removing age gives AIC = 4413.35, which is <b>lower</b> than 4415.11 &rarr; removing age improves the model.<br>
+    4413.35 is the minimum AIC &rarr; <b>remove age</b>.
+  </div>
+
+  <div class="key-rule">
+    <strong>AIC and R&sup2;<sub>adj</sub> relationship:</strong><br>
+    Lower AIC generally corresponds to higher R&sup2;<sub>adj</sub>. A model with lower AIC will typically have a larger (or equal) adjusted R&sup2; compared to a model with higher AIC.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 6: RESIDUAL ANALYSIS -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>6. Residual Analysis &mdash; Checking Model Assumptions</h2>
+
+  <p>After fitting a linear model, R produces 4 diagnostic plots via <code>plot(model)</code>. Each checks a specific assumption:</p>
+
+  <h3>Plot 1: Residuals vs Fitted</h3>
+  <ul>
+    <li><b>Checks:</b> Linearity and constant variance</li>
+    <li><b>Good:</b> Random scatter around 0, no pattern (no curve, no fan shape)</li>
+    <li><b>Bad:</b> U-shape or curve &rarr; non-linear relationship. Fan/funnel shape &rarr; non-constant variance</li>
+  </ul>
+
+  <h3>Plot 2: Normal Q-Q</h3>
+  <ul>
+    <li><b>Checks:</b> Normality of residuals</li>
+    <li><b>Good:</b> Points fall approximately on the diagonal line</li>
+    <li><b>Bad:</b> Systematic deviations from the line (heavy tails, skewness)</li>
+  </ul>
+
+  <h3>Plot 3: Scale-Location (Spread-Location)</h3>
+  <ul>
+    <li><b>Checks:</b> Homoscedasticity (constant variance)</li>
+    <li><b>Good:</b> Horizontal red line, points evenly spread</li>
+    <li><b>Bad:</b> Increasing/decreasing trend &rarr; variance changes with fitted values</li>
+  </ul>
+
+  <h3>Plot 4: Residuals vs Leverage</h3>
+  <ul>
+    <li><b>Checks:</b> Influential observations</li>
+    <li><b>Good:</b> All points inside Cook's distance contours (dashed lines)</li>
+    <li><b>Bad:</b> Points beyond Cook's distance &gt; 0.5 (or &gt; 1) are highly influential</li>
+  </ul>
+
+  <div class="key-rule">
+    <strong>Quick memory trick for the exam:</strong><br>
+    1. Residuals vs Fitted &rarr; <b>L</b>inearity + <b>E</b>qual variance<br>
+    2. Normal Q-Q &rarr; <b>N</b>ormality<br>
+    3. Scale-Location &rarr; <b>S</b>pread (homoscedasticity)<br>
+    4. Residuals vs Leverage &rarr; <b>I</b>nfluential points
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 7: INTERACTION TERMS & SUMMARY -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-summary">Cheat Sheet</span>
+  <h2>7. Interaction Terms &amp; Module Summary</h2>
+
+  <h3>Writing out the simplified model for a specific category</h3>
+  <p>When a model has indicator variables and interactions, substitute the category value to simplify:</p>
+
+  <div class="example-box">
+    <div class="label">Example: Cat heart weight model</div>
+    Full model: &#375; = 2.98 + 2.64&middot;Bwt &minus; 4.17&middot;SexM + 1.68&middot;Bwt:SexM<br><br>
+    <b>For female cats</b> (SexM = 0):<br>
+    &#375; = 2.98 + 2.64&middot;Bwt &minus; 4.17(0) + 1.68&middot;Bwt(0)<br>
+    &#375; = 2.98 + 2.64&middot;Bwt<br><br>
+    <b>For male cats</b> (SexM = 1):<br>
+    &#375; = 2.98 + 2.64&middot;Bwt &minus; 4.17(1) + 1.68&middot;Bwt(1)<br>
+    &#375; = (2.98 &minus; 4.17) + (2.64 + 1.68)&middot;Bwt<br>
+    &#375; = &minus;1.19 + 4.32&middot;Bwt
+  </div>
+
+  <h3>Module 6 Summary</h3>
+  <ol>
+    <li>Simple regression: &#375; = b&#8320; + b&#8321;x, slope = r &middot; (s<sub>y</sub>/s<sub>x</sub>)</li>
+    <li>Residual = observed &minus; predicted = y &minus; &#375;</li>
+    <li>Multiple regression: "all else being equal" interpretation for each slope</li>
+    <li>Indicator variables: reference category absorbed into intercept</li>
+    <li>Interaction terms: different slopes for different categories</li>
+    <li>R&sup2; = 1 &minus; SS<sub>Res</sub>/SS<sub>Tot</sub>; for simple regression R&sup2; = r&sup2;</li>
+    <li>R&sup2;<sub>adj</sub> = 1 &minus; (Residual SE)&sup2;/Var(y) &mdash; penalizes extra predictors</li>
+    <li>T-test for coefficients: T = b<sub>j</sub>/SE, df = n &minus; k &minus; 1</li>
+    <li>AIC backward elimination: remove variable giving <b>lowest AIC</b>; stop when &lt;none&gt; is lowest</li>
+    <li>4 diagnostic plots: linearity, normality, homoscedasticity, influential points</li>
+  </ol>
+</div>
+
+<!-- ============================================ -->
+<!-- PRACTICE EXERCISES -->
+<!-- ============================================ -->
+<div class="section-divider">Now You Try</div>
+
+<!-- EXERCISE 1 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 1 &mdash; Interpret Regression Output</div>
+  <span class="points">3 pts &bull; Exam classic</span>
+  <div class="exercise-text">A simple linear regression predicts the calorie content of Starbucks food items from their carbohydrate content (in grams). The R output gives:</div>
+  <div class="hint-box">Coefficients:
+              Estimate Std. Error t value Pr(>|t|)
+(Intercept)  146.0200    25.9186   5.634  2.93e-07
+Carb           4.2971     0.5424   7.925  1.65e-11
+
+Residual standard error: 78.26 on 74 degrees of freedom
+Multiple R-squared: 0.4590
+Adjusted R-squared: 0.4517</div>
+  <div class="exercise-text">
+a) Write the equation of the regression model.
+b) Interpret the slope of carbohydrate in context.
+c) A food item has 350 calories and 45g carbs. Compute the residual. Did the model overestimate or underestimate?</div>
+  <div class="sub-label">a) Equation</div>
+  <textarea class="answer-area" data-id="P1a" placeholder="&#375; = ..."></textarea>
+  <div class="sub-label">b) Interpretation</div>
+  <textarea class="answer-area" data-id="P1b" placeholder="For each additional gram of carbohydrate..."></textarea>
+  <div class="sub-label">c) Residual</div>
+  <textarea class="answer-area" data-id="P1c" placeholder="&#375; = ... Residual = ..." style="min-height:100px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a)</b> &#375; = 146.02 + 4.2971 &middot; Carb<br><br>
+
+      <b>b)</b> For each additional gram of carbohydrate, the predicted calorie content of Starbucks food items increases by approximately 4.30 calories, on average.<br><br>
+
+      <b>c)</b><br>
+      Predicted: &#375; = 146.02 + 4.2971 &middot; 45 = 146.02 + 193.37 = <b>339.39 calories</b><br>
+      Residual = y &minus; &#375; = 350 &minus; 339.39 = <b>+10.61 calories</b><br><br>
+      The residual is positive, so the model <b>underestimated</b> the calories for this food item by about 10.6 calories.
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 2 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 2 &mdash; Multiple Regression &amp; Adjusted R&sup2;</div>
+  <span class="points">4 pts &bull; From 2022 exam</span>
+  <div class="exercise-text">A multiple regression model predicts birth weight (bwt, in ounces) from 6 predictors. The R output:</div>
+  <div class="hint-box">Coefficients:
+              Estimate Std. Error t value Pr(>|t|)
+(Intercept) -80.41      14.35    -5.604  3.01e-08
+gestation     0.44       0.03    14.667  < 2e-16
+parity       -3.33       1.21    -2.751  0.00611
+age           -0.01      0.09    -0.111  0.91200
+height        1.15       0.21     5.476  5.73e-08
+weight        0.05       0.03     1.667  0.09600
+smoke        -8.40       0.95    -8.842  < 2e-16
+
+Residual standard error: 15.72 on 793 degrees of freedom</div>
+  <div class="exercise-text">
+a) Write the regression equation (round to 2 decimals).
+b) Interpret the slope for gestation and for smoke in context.
+c) For the parity line: state H&#8320; and H_A, and decide at &alpha; = 0.05.
+d) Calculate adjusted R&sup2;. Hint: var(babies$bwt) = 346.472.</div>
+  <div class="sub-label">a) Equation</div>
+  <textarea class="answer-area" data-id="P2a" placeholder="&#375; = ..." style="min-height:60px"></textarea>
+  <div class="sub-label">b) Interpretations</div>
+  <textarea class="answer-area" data-id="P2b" placeholder="Gestation: ...&#10;Smoke: ..." style="min-height:120px"></textarea>
+  <div class="sub-label">c) Hypothesis test for parity</div>
+  <textarea class="answer-area" data-id="P2c" placeholder="H₀: ...&#10;H_A: ...&#10;Decision: ..." style="min-height:100px"></textarea>
+  <div class="sub-label">d) Adjusted R&sup2;</div>
+  <textarea class="answer-area" data-id="P2d" placeholder="R²_adj = 1 - ..."></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a)</b><br>
+      &#375; = &minus;80.41 + 0.44&middot;gestation &minus; 3.33&middot;parity &minus; 0.01&middot;age + 1.15&middot;height + 0.05&middot;weight &minus; 8.40&middot;smoke<br><br>
+
+      <b>b)</b><br>
+      <u>Gestation:</u> All else being equal, for each additional day of gestation, the predicted birth weight increases by 0.44 ounces, on average.<br><br>
+      <u>Smoke:</u> All else being equal, babies born to mothers who smoke have a predicted birth weight that is 8.40 ounces <b>lower</b> than those born to non-smoking mothers, on average.<br><br>
+
+      <b>c)</b><br>
+      H&#8320;: &beta;<sub>parity</sub> = 0 (parity has no linear relationship with birth weight, given all other predictors)<br>
+      H<sub>A</sub>: &beta;<sub>parity</sub> &ne; 0 (parity does have a linear relationship with birth weight)<br><br>
+      p-value = 0.00611 &lt; 0.05 = &alpha;<br>
+      <b>Reject H&#8320;.</b> There is sufficient evidence that parity is a significant predictor of birth weight, after accounting for the other variables.<br><br>
+
+      <b>d)</b><br>
+      R&sup2;<sub>adj</sub> = 1 &minus; (Residual SE)&sup2; / Var(y)<br>
+      R&sup2;<sub>adj</sub> = 1 &minus; (15.72)&sup2; / 346.472<br>
+      R&sup2;<sub>adj</sub> = 1 &minus; 247.1184 / 346.472<br>
+      R&sup2;<sub>adj</sub> = 1 &minus; 0.7132<br>
+      R&sup2;<sub>adj</sub> = <b>0.2868 &approx; 0.287</b><br><br>
+      About 28.7% of the variability in birth weight is explained by the model (after adjusting for the number of predictors).
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 3 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 3 &mdash; AIC Backward Elimination</div>
+  <span class="points">2 pts &bull; From 2022/2023 exams</span>
+  <div class="exercise-text">You run step() on the birth weight model. The first step output is (rows permuted!):</div>
+  <div class="hint-box">Step: AIC = 4415.11
+
+         Df  Sum of Sq    RSS    AIC
+- age     1       3.05 195950 4413.12
+- weight  1     687.32 196634 4414.88
+&lt;none&gt;                 195947 4415.11
+- parity  1    1869.42 197816 4417.92
+- height  1    7406.83 203354 4432.19
+- smoke   1   19305.99 215253 4462.05
+- gest    1   53114.27 249061 4542.73</div>
+  <div class="exercise-text">Which variable should be removed in this step? Justify your answer.</div>
+  <textarea class="answer-area" data-id="P3" placeholder="The variable to remove is ... because ..." style="min-height:120px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>Remove age.</b><br><br>
+      The current model AIC is 4415.11 (shown in the &lt;none&gt; row).<br><br>
+      Removing age gives AIC = 4413.12, which is the <b>lowest AIC</b> among all options &mdash; and it is lower than the current AIC of 4415.11.<br><br>
+      Since 4413.12 &lt; 4415.11, removing age <b>improves</b> the model. We continue the backward elimination process.<br><br>
+      <b>Key:</b> Always scan ALL rows to find the minimum. The rows were shuffled &mdash; do not assume order!
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 4 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 4 &mdash; Interaction Term</div>
+  <span class="points">3 pts &bull; From 2023 exam</span>
+  <div class="exercise-text">A model predicts cat heart weight (Hwt, in grams) from body weight (Bwt, in kg) and sex. The coefficient table:</div>
+  <div class="hint-box">Coefficients:
+             Estimate Std. Error t value Pr(>|t|)
+(Intercept)   2.9813     1.8428   1.618   0.1079
+Bwt           2.6364     0.6837   3.857   0.0002
+SexM         -4.1654     2.5635  -1.625   0.1064
+Bwt:SexM      1.6763     1.0120   1.657   0.0997</div>
+  <div class="exercise-text">
+a) Write the estimated model for a male cat. Simplify the equation.
+b) Interpret the coefficient of SexM in context.
+c) Is the interaction term Bwt:SexM significant at the &alpha; = 0.05 level?
+   Hint: pt(c(1.656, 1.978), df=140, lower.tail=FALSE) gives 0.0500 and 0.0249.</div>
+  <div class="sub-label">a) Model for male cats</div>
+  <textarea class="answer-area" data-id="P4a" placeholder="Substitute SexM = 1 and simplify..." style="min-height:120px"></textarea>
+  <div class="sub-label">b) Interpret SexM</div>
+  <textarea class="answer-area" data-id="P4b" placeholder="The coefficient of SexM means..."></textarea>
+  <div class="sub-label">c) Significance of interaction</div>
+  <textarea class="answer-area" data-id="P4c" placeholder="t = ..., p-value = ..." style="min-height:100px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a)</b> Full model: &#375; = 2.98 + 2.64&middot;Bwt &minus; 4.17&middot;SexM + 1.68&middot;Bwt:SexM<br><br>
+      For male cats, SexM = 1:<br>
+      &#375; = 2.98 + 2.64&middot;Bwt &minus; 4.17(1) + 1.68&middot;Bwt(1)<br>
+      &#375; = (2.98 &minus; 4.17) + (2.64 + 1.68)&middot;Bwt<br>
+      <b>&#375; = &minus;1.19 + 4.32&middot;Bwt</b><br><br>
+
+      <b>b)</b> The coefficient of SexM (&minus;4.17) represents the difference in predicted heart weight between male and female cats <b>when Bwt = 0</b>. However, because the model includes an interaction term (Bwt:SexM), this coefficient alone does NOT represent the overall difference between sexes &mdash; the difference depends on body weight. At Bwt = 0, male cats have a predicted heart weight 4.17 grams lower than female cats.<br><br>
+
+      <b>c)</b> The t-value for Bwt:SexM is 1.657.<br>
+      From the hint: pt(1.656, df=140, lower.tail=FALSE) = 0.0500<br>
+      Since this is a two-sided test, p-value = 2 &times; 0.0500 = 0.1000.<br><br>
+      Actually, looking more carefully: t = 1.657 &gt; 1.656, so the one-sided p-value is slightly less than 0.0500.<br>
+      But the two-sided p-value = 2 &times; (slightly less than 0.05) = slightly less than 0.10, which matches the output p = 0.0997.<br><br>
+      Since p = 0.0997 &gt; 0.05, the interaction term is <b>NOT significant</b> at the &alpha; = 0.05 level. There is insufficient evidence to conclude that the relationship between body weight and heart weight differs between male and female cats.
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 5 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 5 &mdash; Adjusted R&sup2; Comparison</div>
+  <span class="points">2 pts &bull; From 2023 retake</span>
+  <div class="exercise-text">After backward elimination, model_step has AIC = 1409.6 while model_full has AIC = 1416.9.
+
+Is the adjusted R&sup2; of model_step smaller or larger than that of model_full? Justify your answer using the relationship between AIC and adjusted R&sup2;.</div>
+  <textarea class="answer-area" data-id="P5" placeholder="R²_adj of model_step is ... because ..." style="min-height:140px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      R&sup2;<sub>adj</sub> of model_step is <b>larger</b> than that of model_full.<br><br>
+
+      <b>Justification:</b><br>
+      Both AIC and R&sup2;<sub>adj</sub> penalize for the number of parameters in the model.<br><br>
+      &bull; AIC = constant + n&middot;ln(RSS/n) + 2k &mdash; <b>lower is better</b><br>
+      &bull; R&sup2;<sub>adj</sub> = 1 &minus; [RSS/(n&minus;k&minus;1)] / [SS<sub>Tot</sub>/(n&minus;1)] &mdash; <b>higher is better</b><br><br>
+      When a variable is removed and AIC <em>decreases</em>, it means the penalty reduction (from fewer parameters) outweighs the loss in fit. The same logic applies to R&sup2;<sub>adj</sub>: removing a weak predictor increases R&sup2;<sub>adj</sub> because the penalty term shrinks more than the fit worsens.<br><br>
+      Since model_step has lower AIC (1409.6 &lt; 1416.9), it also has <b>higher R&sup2;<sub>adj</sub></b>.
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 6 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 6 &mdash; Residual Analysis</div>
+  <span class="points">2 pts</span>
+  <div class="exercise-text">After fitting a linear model, R produces 4 diagnostic plots. For each plot, describe:
+(i) what assumption it checks, and
+(ii) what a "good" result looks like.</div>
+  <div class="sub-label">Plot 1: Residuals vs Fitted</div>
+  <textarea class="answer-area" data-id="P6a" placeholder="Checks: ...&#10;Good: ..."></textarea>
+  <div class="sub-label">Plot 2: Normal Q-Q</div>
+  <textarea class="answer-area" data-id="P6b" placeholder="Checks: ...&#10;Good: ..."></textarea>
+  <div class="sub-label">Plot 3: Scale-Location</div>
+  <textarea class="answer-area" data-id="P6c" placeholder="Checks: ...&#10;Good: ..."></textarea>
+  <div class="sub-label">Plot 4: Residuals vs Leverage</div>
+  <textarea class="answer-area" data-id="P6d" placeholder="Checks: ...&#10;Good: ..."></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>Plot 1: Residuals vs Fitted</b><br>
+      Checks: <b>Linearity</b> and <b>constant variance</b> (homoscedasticity).<br>
+      Good: Random scatter of points around the horizontal line at 0. No curve, no fan/funnel shape.<br><br>
+
+      <b>Plot 2: Normal Q-Q</b><br>
+      Checks: <b>Normality of residuals</b>.<br>
+      Good: Points fall approximately along the diagonal reference line. Minor deviations at the tails are acceptable.<br><br>
+
+      <b>Plot 3: Scale-Location</b><br>
+      Checks: <b>Homoscedasticity</b> (constant variance across fitted values).<br>
+      Good: The red smoothing line is approximately horizontal, and points are evenly spread (no increasing or decreasing trend in spread).<br><br>
+
+      <b>Plot 4: Residuals vs Leverage</b><br>
+      Checks: <b>Influential observations</b> (outliers with high leverage).<br>
+      Good: No points outside Cook's distance contours (dashed lines). Cook's distance should be &lt; 0.5 for all observations. Points with high leverage AND large residuals are problematic.
+    </div>
+  </div>
+</div>
+
+</div> <!-- end container -->
+
+<!-- EXPORT BAR -->
+<div class="export-bar">
+  <button class="export-btn" onclick="exportAnswers()">Export My Answers to Claude</button>
+  <div class="progress-bar" id="progress"></div>
+  <div id="export-result"></div>
+</div>
+
+<script>
+function toggleSolution(btn) {
+  const content = btn.nextElementSibling;
+  content.classList.toggle('visible');
+  btn.textContent = content.classList.contains('visible') ? 'Hide Solution' : 'Show Solution';
+}
+
+const areas = document.querySelectorAll('.answer-area');
+const progressDiv = document.getElementById('progress');
+areas.forEach(() => { let d = document.createElement('div'); d.className = 'progress-dot'; progressDiv.appendChild(d); });
+
+function updateProgress() {
+  const dots = progressDiv.querySelectorAll('.progress-dot');
+  areas.forEach((a, i) => { dots[i].className = a.value.trim().length > 3 ? 'progress-dot filled' : 'progress-dot'; });
+}
+areas.forEach(a => a.addEventListener('input', updateProgress));
+
+function autoSave() { let d = {}; areas.forEach(a => { d[a.getAttribute('data-id')] = a.value; }); localStorage.setItem('module06', JSON.stringify(d)); }
+function autoLoad() { let d = JSON.parse(localStorage.getItem('module06') || '{}'); areas.forEach(a => { let s = d[a.getAttribute('data-id')]; if (s) a.value = s; }); updateProgress(); }
+areas.forEach(a => a.addEventListener('input', autoSave));
+autoLoad();
+
+function exportAnswers() {
+  let r = { module: "Module 6 — Linear Regression", timestamp: new Date().toISOString(), answers: {} };
+  areas.forEach(a => { let v = a.value.trim(); if (v) r.answers[a.getAttribute('data-id')] = v; });
+  let j = JSON.stringify(r, null, 2);
+  navigator.clipboard.writeText(j).then(() => {
+    document.getElementById('export-result').style.display = 'block';
+    document.getElementById('export-result').textContent = `Copied ${Object.keys(r.answers).length} answers! Paste to Claude with Cmd+V.`;
+  });
+}
+</script>
+
+</body>
+</html>

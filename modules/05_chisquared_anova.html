@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 5 — Chi-Squared & ANOVA</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; background: #f5f7fa; color: #1a1a2e; line-height: 1.7; }
+  .container { max-width: 820px; margin: 0 auto; padding: 30px 20px 120px; }
+
+  header { text-align: center; margin-bottom: 35px; padding: 28px; background: linear-gradient(135deg, #c0392b, #e74c3c); color: white; border-radius: 16px; }
+  header h1 { font-size: 24px; margin-bottom: 4px; }
+  header .sub { opacity: 0.8; font-size: 13px; }
+  header .week { display: inline-block; background: rgba(255,255,255,0.2); padding: 3px 12px; border-radius: 20px; font-size: 12px; margin-top: 8px; }
+
+  .lesson { background: white; border-radius: 14px; padding: 24px 26px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid #e0e6ed; }
+  .lesson-tag { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 10px; border-radius: 6px; margin-bottom: 10px; }
+  .tag-concept { background: #eaf2f8; color: #2471a3; }
+  .tag-example { background: #e8f8f5; color: #1e8449; }
+  .tag-practice { background: #fef5e7; color: #d4830a; }
+  .tag-summary { background: #fdedec; color: #c0392b; }
+
+  .lesson h2 { font-size: 18px; color: #1a1a2e; margin-bottom: 12px; }
+  .lesson h3 { font-size: 15px; color: #2c3e50; margin: 16px 0 8px; }
+  .lesson p, .lesson li { font-size: 14px; }
+  .lesson ul, .lesson ol { padding-left: 22px; margin: 8px 0; }
+  .lesson li { margin-bottom: 4px; }
+
+  .formula { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 14px 18px; margin: 12px 0; font-size: 15px; text-align: center; font-family: 'Times New Roman', Georgia, serif; }
+  .formula .label { font-family: -apple-system, sans-serif; font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; text-align: left; }
+
+  .highlight { background: #fef9e7; border-left: 4px solid #f1c40f; padding: 12px 16px; border-radius: 6px; margin: 12px 0; font-size: 14px; }
+  .highlight strong { color: #d4830a; }
+
+  .key-rule { background: #eaf2f8; border-left: 4px solid #2980b9; padding: 12px 16px; border-radius: 6px; margin: 12px 0; font-size: 14px; }
+  .key-rule strong { color: #1a5276; }
+
+  .danger { background: #fdedec; border-left: 4px solid #e74c3c; padding: 12px 16px; border-radius: 6px; margin: 12px 0; font-size: 14px; }
+  .danger strong { color: #c0392b; }
+
+  .example-box { background: #f0faf4; border: 1px solid #a9dfbf; border-radius: 10px; padding: 16px; margin: 12px 0; }
+  .example-box .label { font-weight: 700; color: #1e8449; font-size: 13px; margin-bottom: 6px; }
+
+  .step-box { background: #fdf2f2; border: 1px solid #f5b7b1; border-radius: 10px; padding: 16px; margin: 12px 0; }
+  .step-box .step { font-weight: 700; color: #c0392b; font-size: 13px; margin-bottom: 2px; }
+
+  table { border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+  th, td { border: 1px solid #d5dbdb; padding: 8px 12px; text-align: center; }
+  th { background: #f0f3f5; font-weight: 600; }
+
+  .vs-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .vs-card { padding: 14px; border-radius: 10px; font-size: 13px; }
+  .vs-left { background: #e8f8f5; border: 1px solid #a3e4d7; }
+  .vs-right { background: #fdedec; border: 1px solid #f5b7b1; }
+  .vs-card strong { display: block; font-size: 14px; margin-bottom: 6px; }
+
+  .exercise { background: white; border-radius: 14px; padding: 22px 24px; margin-bottom: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 2px solid #f0b949; }
+  .exercise-title { font-weight: 700; font-size: 15px; color: #d4830a; margin-bottom: 4px; }
+  .points { display: inline-block; background: #fef5e7; color: #d4830a; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-bottom: 10px; }
+  .exercise-text { font-size: 14px; margin-bottom: 12px; white-space: pre-wrap; }
+  .hint-box { background: #fef9e7; border-left: 3px solid #f39c12; padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 14px; font-family: 'SF Mono', 'Menlo', monospace; white-space: pre; overflow-x: auto; }
+
+  .sub-label { font-weight: 600; font-size: 13px; color: #555; margin: 10px 0 4px 0; }
+  .answer-area { width: 100%; min-height: 80px; border: 2px solid #d5dbdb; border-radius: 8px; padding: 12px; font-size: 14px; font-family: inherit; resize: vertical; transition: border-color 0.2s; }
+  .answer-area:focus { outline: none; border-color: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,0.15); }
+  .answer-area::placeholder { color: #aab7c4; }
+
+  .solution-wrapper { margin-top: 10px; }
+  .reveal-btn { background: #fdedec; border: 1px solid #f5b7b1; color: #c0392b; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
+  .reveal-btn:hover { background: #fadbd8; }
+  .solution-content { display: none; background: #f0faf4; border: 1px solid #a9dfbf; border-radius: 8px; padding: 14px; margin-top: 8px; font-size: 14px; line-height: 1.8; }
+  .solution-content.visible { display: block; }
+
+  .export-bar { position: sticky; bottom: 0; background: white; border-top: 2px solid #e8ecf1; padding: 14px; text-align: center; z-index: 100; }
+  .export-btn { background: linear-gradient(135deg, #c0392b, #e74c3c); color: white; border: none; padding: 12px 36px; font-size: 15px; font-weight: 700; border-radius: 10px; cursor: pointer; }
+  .export-btn:hover { transform: scale(1.02); }
+  .progress-bar { display: flex; gap: 3px; justify-content: center; margin-top: 10px; }
+  .progress-dot { width: 10px; height: 10px; border-radius: 50%; background: #d5dbdb; transition: background 0.3s; }
+  .progress-dot.filled { background: #27ae60; }
+  #export-result { margin-top: 8px; font-size: 13px; color: #27ae60; display: none; }
+
+  .section-divider { text-align: center; margin: 35px 0 25px; font-size: 13px; color: #aab7c4; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+  .section-divider::before, .section-divider::after { content: ''; display: inline-block; width: 40px; height: 1px; background: #d5dbdb; vertical-align: middle; margin: 0 12px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<header>
+  <h1>Module 5: Chi-Squared & ANOVA</h1>
+  <div class="sub">Two big topics &mdash; together worth ~15 points on the exam</div>
+  <div class="week">Week 1 &bull; Day 5</div>
+</header>
+
+<!-- ============================================ -->
+<!-- LESSON 1: CHI-SQUARED GOODNESS OF FIT -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>1. Chi-Squared Goodness of Fit (GOF)</h2>
+
+  <p>Tests whether an observed distribution matches a hypothesized one. "Do the data fit the expected proportions?"</p>
+
+  <div class="formula">
+    <div class="label">Hypotheses</div>
+    H&#8320;: The distribution follows the hypothesized proportions (p&#8321;, p&#8322;, ..., p&#8342;)<br>
+    H&#7424;: The distribution does NOT follow the hypothesized proportions
+  </div>
+
+  <div class="formula">
+    <div class="label">Expected Counts</div>
+    Expected<sub>i</sub> = n &times; p&#8320;<sub>i</sub>
+  </div>
+
+  <div class="formula">
+    <div class="label">Chi-Squared Test Statistic</div>
+    &chi;&sup2; = &Sigma; (observed<sub>i</sub> &minus; expected<sub>i</sub>)&sup2; / expected<sub>i</sub>
+  </div>
+
+  <div class="formula">
+    <div class="label">Degrees of Freedom</div>
+    df = k &minus; 1 &nbsp;&nbsp;&nbsp; (k = number of categories)
+  </div>
+
+  <h3>Conditions</h3>
+  <ol>
+    <li><b>Independence:</b> sampled observations must be independent (random sample, n &lt; 10% of population)</li>
+    <li><b>Sample size:</b> all expected counts &ge; 5</li>
+  </ol>
+
+  <h3>R Code</h3>
+  <div class="hint-box">chisq.test(table(data$variable), p = c(0.22, 0.18, 0.37, 0.23))</div>
+
+  <h3>infer Workflow (simulation-based)</h3>
+  <div class="hint-box">null_dist &lt;- data |&gt;
+  specify(response = variable) |&gt;
+  hypothesize(null = "point", p = c("cat1" = 0.22,
+              "cat2" = 0.18, "cat3" = 0.37, "cat4" = 0.23)) |&gt;
+  generate(reps = 1000, type = "draw") |&gt;
+  calculate(stat = "Chisq")</div>
+
+  <div class="key-rule">
+    <strong>Key insight:</strong> GOF compares <b>one categorical variable</b> to a hypothesized distribution. The test checks all categories simultaneously &mdash; you cannot split it into separate tests.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 2: CHI-SQUARED INDEPENDENCE TEST -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>2. Chi-Squared Test of Independence</h2>
+
+  <p>Tests whether <b>two categorical variables</b> are associated or independent.</p>
+
+  <div class="formula">
+    <div class="label">Hypotheses</div>
+    H&#8320;: The two variables are independent (no association)<br>
+    H&#7424;: The two variables are NOT independent (there IS association)
+  </div>
+
+  <div class="formula">
+    <div class="label">Expected Counts (under independence)</div>
+    Expected = (row total &times; column total) / table total
+  </div>
+
+  <div class="formula">
+    <div class="label">Degrees of Freedom</div>
+    df = (r &minus; 1)(c &minus; 1) &nbsp;&nbsp;&nbsp; (r = rows, c = columns)
+  </div>
+
+  <p>The test statistic uses the same formula: &chi;&sup2; = &Sigma; (O &minus; E)&sup2; / E, summed over all cells.</p>
+
+  <h3>R Code</h3>
+  <div class="hint-box">chisq.test(data$var1, data$var2)</div>
+
+  <h3>infer Workflow (simulation-based)</h3>
+  <div class="hint-box">null_dist &lt;- data |&gt;
+  specify(formula = response ~ explanatory) |&gt;
+  hypothesize(null = "independence") |&gt;
+  generate(reps = 1000, type = "permute") |&gt;
+  calculate(stat = "Chisq")</div>
+
+  <div class="vs-box">
+    <div class="vs-card vs-left">
+      <strong>GOF Test</strong>
+      One variable vs. hypothesized distribution<br>
+      df = k &minus; 1<br>
+      Uses <code>p = c(...)</code>
+    </div>
+    <div class="vs-card vs-right">
+      <strong>Independence Test</strong>
+      Two variables vs. each other<br>
+      df = (r&minus;1)(c&minus;1)<br>
+      Uses <code>formula = y ~ x</code>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 3: INTERPRETING CHI-SQUARED RESULTS -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>3. Interpreting Chi-Squared Results</h2>
+
+  <p>The &chi;&sup2; distribution is right-skewed and always positive. Larger &chi;&sup2; values mean stronger evidence against H&#8320;.</p>
+
+  <ul>
+    <li><b>Large &chi;&sup2;</b> &rarr; small p-value &rarr; reject H&#8320; &rarr; evidence of association / poor fit</li>
+    <li><b>Small &chi;&sup2;</b> &rarr; large p-value &rarr; fail to reject H&#8320; &rarr; no evidence against the null</li>
+  </ul>
+
+  <h3>Bounding p-values with qchisq()</h3>
+  <p>On the exam, you often need to bound p-values rather than compute them exactly:</p>
+
+  <div class="hint-box">qchisq(0.90, df = 4)  # gives 7.78
+qchisq(0.95, df = 4)  # gives 9.49
+qchisq(0.99, df = 4)  # gives 13.28</div>
+
+  <p>If your &chi;&sup2; = 8.5 with df = 4: since 7.78 &lt; 8.5 &lt; 9.49, the p-value is between 0.05 and 0.10.</p>
+
+  <div class="highlight">
+    <strong>Exam technique:</strong> Use qchisq() values to sandwich your test statistic. The p-value = P(&chi;&sup2; &gt; observed), which is 1 &minus; CDF. So if qchisq(0.95, df) = 9.49 and your statistic is 8.5, p-value &gt; 1 &minus; 0.95 = 0.05.
+  </div>
+
+  <div class="danger">
+    <strong>Remember:</strong> &chi;&sup2; tests only tell you IF there is an association, not WHERE or HOW STRONG. For strength, look at effect size measures or compare observed vs expected cell by cell.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 4: ANOVA -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>4. ANOVA &mdash; Comparing Multiple Group Means</h2>
+
+  <p>ANOVA (Analysis of Variance) tests whether the means of <b>3 or more groups</b> differ. It generalizes the two-sample t-test.</p>
+
+  <div class="formula">
+    <div class="label">Hypotheses</div>
+    H&#8320;: &mu;&#8321; = &mu;&#8322; = ... = &mu;&#8342; &nbsp;&nbsp; (all group means are equal)<br>
+    H&#7424;: At least one group mean differs
+  </div>
+
+  <div class="formula">
+    <div class="label">F Statistic</div>
+    F = MSG / MSE = (SSG / df<sub>G</sub>) / (SSE / df<sub>E</sub>)
+  </div>
+
+  <div class="formula">
+    <div class="label">Sum of Squares Decomposition</div>
+    SST = SSG + SSE<br>
+    <small>Total variability = Between-group + Within-group</small>
+  </div>
+
+  <div class="formula">
+    <div class="label">Degrees of Freedom</div>
+    df<sub>G</sub> = k &minus; 1 &nbsp;&nbsp;&nbsp; df<sub>E</sub> = n &minus; k &nbsp;&nbsp;&nbsp; df<sub>T</sub> = n &minus; 1<br>
+    <small>(k = number of groups, n = total observations)</small>
+  </div>
+
+  <h3>The ANOVA Table</h3>
+  <table style="width:100%">
+    <tr><th>Source</th><th>Df</th><th>Sum Sq</th><th>Mean Sq</th><th>F value</th><th>Pr(&gt;F)</th></tr>
+    <tr><td>Group</td><td>k &minus; 1</td><td>SSG</td><td>MSG = SSG/(k&minus;1)</td><td>MSG/MSE</td><td>p-value</td></tr>
+    <tr><td>Residuals</td><td>n &minus; k</td><td>SSE</td><td>MSE = SSE/(n&minus;k)</td><td></td><td></td></tr>
+  </table>
+
+  <h3>R&sup2; in ANOVA</h3>
+  <div class="formula">
+    <div class="label">Proportion of Variability Explained</div>
+    R&sup2; = SSG / SST
+  </div>
+
+  <h3>Conditions</h3>
+  <ol>
+    <li><b>Independence:</b> observations within and across groups are independent</li>
+    <li><b>Approximate normality:</b> the distribution within each group should be nearly normal (check with QQ-plots)</li>
+    <li><b>Constant variance:</b> the variability across groups should be roughly equal (largest SD / smallest SD &lt; 2 is a common rule)</li>
+  </ol>
+
+  <div class="key-rule">
+    <strong>Exam must-know:</strong> The ANOVA table fill-in question appears on virtually every TUM stats exam. Master the relationships: MSG = SSG/df<sub>G</sub>, MSE = SSE/df<sub>E</sub>, F = MSG/MSE, SST = SSG + SSE, df<sub>T</sub> = df<sub>G</sub> + df<sub>E</sub>.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 5: BONFERRONI CORRECTION -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-concept">Concept</span>
+  <h2>5. Post-hoc: Bonferroni Correction</h2>
+
+  <p>ANOVA only tells you "at least one mean differs" &mdash; it does NOT tell you which pairs differ. For that, do <b>pairwise t-tests</b> with a Bonferroni correction.</p>
+
+  <div class="formula">
+    <div class="label">Number of Pairwise Comparisons</div>
+    K = C(k, 2) = k(k &minus; 1) / 2
+  </div>
+
+  <div class="formula">
+    <div class="label">Bonferroni-adjusted Significance Level</div>
+    &alpha;* = &alpha; / K
+  </div>
+
+  <div class="formula">
+    <div class="label">Adjusted p-value (alternative approach)</div>
+    p<sub>adj</sub> = K &times; p<sub>original</sub>
+  </div>
+
+  <div class="example-box">
+    <div class="label">Example: 3 groups at &alpha; = 0.05</div>
+    K = C(3,2) = 3 pairwise comparisons<br>
+    &alpha;* = 0.05 / 3 = <b>0.0167</b><br><br>
+    If a pairwise t-test gives p = 0.03:<br>
+    Method 1: 0.03 &gt; &alpha;* = 0.0167 &rarr; do NOT reject<br>
+    Method 2: p<sub>adj</sub> = 3 &times; 0.03 = 0.09 &gt; 0.05 &rarr; do NOT reject<br>
+    Both methods give the same conclusion.
+  </div>
+
+  <div class="danger">
+    <strong>Why Bonferroni matters:</strong> Without correction, if you do K tests at &alpha; = 0.05, the probability of at least one false positive is approximately K &times; &alpha;. Bonferroni controls this by making each individual test more strict.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 6: ANOVA TABLE WALKTHROUGH -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-example">Worked Example</span>
+  <h2>6. ANOVA Table Walkthrough &mdash; Step by Step</h2>
+
+  <p><em>This type of question appears on every single TUM exam. You are given a partial ANOVA table and must fill in the blanks.</em></p>
+
+  <div class="example-box">
+    <div class="label">Problem Setup:</div>
+    3 groups (k=3), 6 observations each (n=18).<br>
+    Given: SSG = 7.36, F = 13.47, and the hint var(data) &times; 17 = 11.46
+  </div>
+
+  <div class="step-box">
+    <div class="step">Step 1: Degrees of freedom</div>
+    df<sub>G</sub> = k &minus; 1 = 3 &minus; 1 = <b>2</b><br>
+    df<sub>E</sub> = n &minus; k = 18 &minus; 3 = <b>15</b><br>
+    df<sub>T</sub> = n &minus; 1 = 18 &minus; 1 = 17 &nbsp;&nbsp; (sanity check: 2 + 15 = 17 &#10003;)
+  </div>
+
+  <div class="step-box">
+    <div class="step">Step 2: Use the hint to find SST</div>
+    SST = var(data) &times; (n &minus; 1) = var(data) &times; 17 = <b>11.46</b><br>
+    <small>The hint "var(data) &times; 17 = 11.46" directly gives us SST, because SST = &Sigma;(x<sub>i</sub> &minus; x&#772;)&sup2; = var &times; (n&minus;1)</small>
+  </div>
+
+  <div class="step-box">
+    <div class="step">Step 3: Find SSE</div>
+    SSE = SST &minus; SSG = 11.46 &minus; 7.36 = <b>4.10</b>
+  </div>
+
+  <div class="step-box">
+    <div class="step">Step 4: Compute Mean Squares</div>
+    MSG = SSG / df<sub>G</sub> = 7.36 / 2 = <b>3.68</b><br>
+    MSE = SSE / df<sub>E</sub> = 4.10 / 15 = <b>0.2733</b>
+  </div>
+
+  <div class="step-box">
+    <div class="step">Step 5: Verify F</div>
+    F = MSG / MSE = 3.68 / 0.2733 = <b>13.47</b> &#10003;
+  </div>
+
+  <h3>Completed ANOVA Table</h3>
+  <table style="width:100%">
+    <tr><th>Source</th><th>Df</th><th>Sum Sq</th><th>Mean Sq</th><th>F value</th><th>Pr(&gt;F)</th></tr>
+    <tr><td>year</td><td>2</td><td>7.36</td><td>3.68</td><td>13.47</td><td>0.00045</td></tr>
+    <tr><td>Residuals</td><td>15</td><td>4.10</td><td>0.2733</td><td></td><td></td></tr>
+  </table>
+
+  <div class="highlight">
+    <strong>The key trick on the exam:</strong> The hint "var(data) &times; (n&minus;1)" always gives you SST. From there, SSE = SST &minus; SSG. Once you have sums of squares and df, everything else follows mechanically.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LESSON 7: SUMMARY CHEAT SHEET -->
+<!-- ============================================ -->
+<div class="lesson">
+  <span class="lesson-tag tag-summary">Cheat Sheet</span>
+  <h2>Module 5 Summary</h2>
+
+  <h3>Chi-Squared Tests</h3>
+  <ol>
+    <li><b>GOF:</b> H&#8320; = distribution matches hypothesized proportions. df = k &minus; 1. Expected = n &times; p&#8320;.</li>
+    <li><b>Independence:</b> H&#8320; = two variables are independent. df = (r&minus;1)(c&minus;1). Expected = (row &times; col) / total.</li>
+    <li>&chi;&sup2; = &Sigma;(O &minus; E)&sup2;/E &mdash; same formula for both tests.</li>
+    <li>Conditions: independence + all expected counts &ge; 5.</li>
+    <li>Large &chi;&sup2; &rarr; small p &rarr; reject H&#8320;.</li>
+    <li>Use qchisq() to bound p-values on the exam.</li>
+  </ol>
+
+  <h3>ANOVA</h3>
+  <ol>
+    <li>H&#8320;: all group means equal. H&#7424;: at least one differs.</li>
+    <li>F = MSG / MSE. df<sub>G</sub> = k&minus;1, df<sub>E</sub> = n&minus;k.</li>
+    <li>SST = SSG + SSE. The hint var &times; (n&minus;1) = SST.</li>
+    <li>R&sup2; = SSG / SST = proportion of variability explained by groups.</li>
+    <li>Conditions: independence, normality within groups, constant variance.</li>
+    <li>Bonferroni: &alpha;* = &alpha; / K where K = k(k&minus;1)/2.</li>
+  </ol>
+</div>
+
+<!-- ============================================ -->
+<!-- PRACTICE EXERCISES -->
+<!-- ============================================ -->
+<div class="section-divider">Now You Try</div>
+
+<!-- PRACTICE 1 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 1 &mdash; Goodness of Fit Test</div>
+  <span class="points">4 pts &bull; 2023 Exam</span>
+  <div class="exercise-text">The ANES survey collected data on which US census region respondents live in. The census says the population distribution should be: Northeast 22%, Midwest 18%, South 37%, West 23%.
+
+Running chisq.test(table(anes$region), p = c(0.22, 0.18, 0.37, 0.23)) in R gives:
+
+    X-squared = 2.4861, df = 3, p-value = 0.4778</div>
+  <div class="sub-label">a) State H&#8320; and H&#7424; in context.</div>
+  <textarea class="answer-area" data-id="P1a" placeholder="H0: The distribution of ANES respondents across regions..."></textarea>
+  <div class="sub-label">b) Check the conditions for this test.</div>
+  <textarea class="answer-area" data-id="P1b" placeholder="1. Independence:...&#10;2. Expected counts:..."></textarea>
+  <div class="sub-label">c) State the conclusion in context at &alpha; = 0.05.</div>
+  <textarea class="answer-area" data-id="P1c" placeholder="Since the p-value..."></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a)</b><br>
+      H&#8320;: The distribution of ANES respondents across census regions follows the census distribution (Northeast 22%, Midwest 18%, South 37%, West 23%).<br>
+      H&#7424;: The distribution of ANES respondents across census regions does NOT follow the census distribution.<br><br>
+
+      <b>b)</b><br>
+      1. <b>Independence:</b> The ANES survey uses random sampling, and the sample is less than 10% of the US population. &#10003;<br>
+      2. <b>Expected counts:</b> Each expected count = n &times; p&#8320;<sub>i</sub>. Since n is large and all proportions are at least 0.18, all expected counts will be well above 5. &#10003;<br><br>
+
+      <b>c)</b><br>
+      Since the p-value = 0.4778 &gt; &alpha; = 0.05, we <b>fail to reject H&#8320;</b>. There is no convincing evidence that the regional distribution of ANES respondents differs from the US census distribution. The sample appears representative of the population with respect to region.
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 2 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 2 &mdash; Independence Test with infer</div>
+  <span class="points">3 pts</span>
+  <div class="exercise-text">We want to test whether region and direction opinion are independent using the infer package. Fill in the blanks in the code below:</div>
+  <div class="hint-box">null_dist &lt;- anes |&gt;
+  specify(formula = ___________) |&gt;
+  hypothesize(null = "___________") |&gt;
+  generate(reps = 1000, type = "___________") |&gt;
+  calculate(stat = "___________")</div>
+  <textarea class="answer-area" data-id="P2" placeholder="Blank 1: formula = ...&#10;Blank 2: null = ...&#10;Blank 3: type = ...&#10;Blank 4: stat = ..." style="min-height:120px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>Blank 1:</b> <code>direction ~ region</code> &nbsp; (response ~ explanatory)<br>
+      <b>Blank 2:</b> <code>"independence"</code> &nbsp; (testing independence of two variables)<br>
+      <b>Blank 3:</b> <code>"permute"</code> &nbsp; (for independence tests, we permute the labels)<br>
+      <b>Blank 4:</b> <code>"Chisq"</code> &nbsp; (chi-squared statistic)<br><br>
+
+      Complete code:
+      <div class="hint-box">null_dist &lt;- anes |&gt;
+  specify(formula = direction ~ region) |&gt;
+  hypothesize(null = "independence") |&gt;
+  generate(reps = 1000, type = "permute") |&gt;
+  calculate(stat = "Chisq")</div>
+
+      <b>Key distinction:</b><br>
+      &bull; GOF: <code>specify(response = var)</code>, <code>null = "point"</code>, <code>type = "draw"</code><br>
+      &bull; Independence: <code>specify(formula = y ~ x)</code>, <code>null = "independence"</code>, <code>type = "permute"</code>
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 3 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 3 &mdash; Chi-Squared p-value Bounds</div>
+  <span class="points">2 pts</span>
+  <div class="exercise-text">A &chi;&sup2; test of independence yields a test statistic of 5.0 for the relationship between socioeconomic status (3 levels: low, middle, high) and game preference (3 levels: strategy, action, puzzle).
+
+State a range for the p-value.</div>
+  <div class="hint-box">qchisq(0.50, df = 4) = 3.36
+qchisq(0.75, df = 4) = 5.39
+qchisq(0.80, df = 4) = 5.99
+qchisq(0.90, df = 4) = 7.78
+qchisq(0.95, df = 4) = 9.49</div>
+  <textarea class="answer-area" data-id="P3" placeholder="df = ...&#10;Since qchisq(...) < 5.0 < qchisq(...)...&#10;Therefore the p-value is between..." style="min-height:120px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>Step 1: Compute df</b><br>
+      df = (r &minus; 1)(c &minus; 1) = (3 &minus; 1)(3 &minus; 1) = <b>4</b><br><br>
+
+      <b>Step 2: Locate the test statistic</b><br>
+      qchisq(0.50, 4) = 3.36 &lt; 5.0 &lt; qchisq(0.75, 4) = 5.39<br><br>
+
+      <b>Step 3: Determine p-value range</b><br>
+      The p-value = P(&chi;&sup2; &gt; 5.0).<br>
+      Since 5.0 is between the 50th and 75th percentile of the &chi;&sup2;(4) distribution:<br>
+      p-value is between 1 &minus; 0.75 = 0.25 and 1 &minus; 0.50 = 0.50.<br><br>
+      <b>0.25 &lt; p-value &lt; 0.50</b><br><br>
+      Since p &gt; 0.05, we fail to reject H&#8320;. No evidence of association between socioeconomic status and game preference.
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 4 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 4 &mdash; ANOVA Table Fill-in</div>
+  <span class="points">6 pts &bull; 2022 Exam</span>
+  <div class="exercise-text">Nitrogen concentration was measured across 3 years (1998, 2003, 2011), with 6 measurements in each year (n = 18 total). The partial ANOVA output is:</div>
+  <table style="width:100%; margin-bottom:12px">
+    <tr><th>Source</th><th>Df</th><th>Sum Sq</th><th>Mean Sq</th><th>F value</th><th>Pr(&gt;F)</th></tr>
+    <tr><td>year</td><td>?</td><td>7.36</td><td>?</td><td>13.47</td><td>0.00045 ***</td></tr>
+    <tr><td>Residuals</td><td>?</td><td>?</td><td>?</td><td></td><td></td></tr>
+  </table>
+  <div class="exercise-text">Hint: var(AE$nitrogen) * 17 = 11.46</div>
+  <div class="sub-label">a) Fill in ALL missing values in the ANOVA table.</div>
+  <textarea class="answer-area" data-id="P4a" placeholder="dfG = ...&#10;dfE = ...&#10;SST = ... (from the hint)&#10;SSE = SST - SSG = ...&#10;MSG = ...&#10;MSE = ..." style="min-height:200px"></textarea>
+  <div class="sub-label">b) State the conclusion in context at &alpha; = 0.05.</div>
+  <textarea class="answer-area" data-id="P4b" placeholder="Since p-value..."></textarea>
+  <div class="sub-label">c) What percentage of variability in nitrogen is explained by year?</div>
+  <textarea class="answer-area" data-id="P4c" placeholder="R^2 = ..."></textarea>
+  <div class="sub-label">d) What is the Bonferroni-adjusted significance level for pairwise tests?</div>
+  <textarea class="answer-area" data-id="P4d" placeholder="K = ... pairs, alpha* = ..."></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a) Fill in the table:</b><br><br>
+      <b>Degrees of freedom:</b><br>
+      df<sub>G</sub> = k &minus; 1 = 3 &minus; 1 = <b>2</b><br>
+      df<sub>E</sub> = n &minus; k = 18 &minus; 3 = <b>15</b><br><br>
+
+      <b>Sum of Squares:</b><br>
+      SST = var(data) &times; (n &minus; 1) = var &times; 17 = <b>11.46</b> (from the hint)<br>
+      SSG = 7.36 (given)<br>
+      SSE = SST &minus; SSG = 11.46 &minus; 7.36 = <b>4.10</b><br><br>
+
+      <b>Mean Squares:</b><br>
+      MSG = SSG / df<sub>G</sub> = 7.36 / 2 = <b>3.68</b><br>
+      MSE = SSE / df<sub>E</sub> = 4.10 / 15 = <b>0.2733</b><br><br>
+
+      <b>Verify:</b> F = MSG / MSE = 3.68 / 0.2733 = 13.47 &#10003;<br><br>
+
+      <table style="width:100%">
+        <tr><th>Source</th><th>Df</th><th>Sum Sq</th><th>Mean Sq</th><th>F value</th><th>Pr(&gt;F)</th></tr>
+        <tr><td>year</td><td>2</td><td>7.36</td><td>3.68</td><td>13.47</td><td>0.00045</td></tr>
+        <tr><td>Residuals</td><td>15</td><td>4.10</td><td>0.2733</td><td></td><td></td></tr>
+      </table><br>
+
+      <b>b)</b> Since the p-value = 0.00045 &lt; &alpha; = 0.05, we <b>reject H&#8320;</b>. There is strong evidence that the mean nitrogen concentration differs across at least two of the three years (1998, 2003, 2011).<br><br>
+
+      <b>c)</b> R&sup2; = SSG / SST = 7.36 / 11.46 = <b>0.6423 = 64.2%</b><br>
+      Year explains about 64.2% of the variability in nitrogen concentration.<br><br>
+
+      <b>d)</b> K = C(3, 2) = 3 pairwise comparisons<br>
+      &alpha;* = 0.05 / 3 = <b>0.0167</b>
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 5 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 5 &mdash; ANOVA SST & F-test</div>
+  <span class="points">3 pts &bull; 2023 Retake Exam</span>
+  <div class="exercise-text">Three versions of an exam (a, b, c) were given to students. The ANOVA yields:
+SSG = 1290, SSE = 29810, F = 3.484.
+
+a) Compute SST.
+
+b) Can H&#8320; (equal means across versions) be rejected at &alpha; = 0.05?</div>
+  <div class="hint-box">qf(0.95, df1 = 2, df2 = 161) = 3.051</div>
+  <div class="sub-label">a)</div>
+  <textarea class="answer-area" data-id="P5a" placeholder="SST = ..."></textarea>
+  <div class="sub-label">b)</div>
+  <textarea class="answer-area" data-id="P5b" placeholder="Compare F to qf critical value..."></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>a)</b><br>
+      SST = SSG + SSE = 1290 + 29810 = <b>31100</b><br><br>
+
+      <b>b)</b><br>
+      The critical value at &alpha; = 0.05 is qf(0.95, df1 = 2, df2 = 161) = 3.051.<br>
+      Since F = 3.484 &gt; 3.051, the F statistic exceeds the critical value.<br><br>
+      Therefore, we <b>reject H&#8320;</b> at &alpha; = 0.05. There is sufficient evidence that the mean exam score differs across at least two of the three exam versions.<br><br>
+
+      <b>Note on df:</b> k = 3 versions, so df<sub>G</sub> = 2. From F = MSG/MSE = (1290/2)/(29810/df<sub>E</sub>) = 3.484, we can solve df<sub>E</sub> = 29810 / (1290/2 / 3.484) = 29810 / 185.1 = 161, confirming n = 164 students total.
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE 6 -->
+<div class="exercise">
+  <span class="lesson-tag tag-practice">Practice</span>
+  <div class="exercise-title">Exercise 6 &mdash; Independence Test with Simulation</div>
+  <span class="points">3 pts &bull; 2023 Exam</span>
+  <div class="exercise-text">A simulated null distribution for a &chi;&sup2; independence test is shown. The observed test statistic is marked with a solid vertical line. A dotted vertical line marks the 0.9 quantile of the null distribution (i.e., 90% of simulated values fall to the left of it).
+
+The observed test statistic falls to the LEFT of the dotted line (0.9 quantile).
+
+Can you reject H&#8320; at the &alpha; = 0.1 significance level? Explain your reasoning.</div>
+  <textarea class="answer-area" data-id="P6" placeholder="The 0.9 quantile means...&#10;Since the observed statistic is to the left...&#10;Therefore the p-value..." style="min-height:140px"></textarea>
+  <div class="solution-wrapper">
+    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+    <div class="solution-content">
+      <b>Key reasoning:</b><br><br>
+
+      The dotted line marks the 0.9 quantile of the null distribution. This means 90% of simulated &chi;&sup2; values (under H&#8320;) fall below this line, and 10% fall above it.<br><br>
+
+      Since the observed test statistic falls to the <b>left</b> of the 0.9 quantile line, the observed value is <b>not</b> among the most extreme 10% of values.<br><br>
+
+      The p-value = proportion of null distribution &ge; observed statistic. Since more than 10% of the null distribution lies to the right of the observed statistic:<br>
+      <b>p-value &gt; 0.10 = &alpha;</b><br><br>
+
+      Therefore, we <b>cannot reject H&#8320;</b> at &alpha; = 0.1. There is insufficient evidence to conclude that the two variables are associated.<br><br>
+
+      <b>Visual rule:</b> For a &chi;&sup2; test, if your observed statistic is to the LEFT of the (1 &minus; &alpha;) quantile line, p-value &gt; &alpha; &rarr; fail to reject. If it's to the RIGHT, p-value &lt; &alpha; &rarr; reject.
+    </div>
+  </div>
+</div>
+
+</div> <!-- end container -->
+
+<!-- EXPORT BAR -->
+<div class="export-bar">
+  <button class="export-btn" onclick="exportAnswers()">Export My Answers to Claude</button>
+  <div class="progress-bar" id="progress"></div>
+  <div id="export-result"></div>
+</div>
+
+<script>
+function toggleSolution(btn) {
+  const content = btn.nextElementSibling;
+  content.classList.toggle('visible');
+  btn.textContent = content.classList.contains('visible') ? 'Hide Solution' : 'Show Solution';
+}
+
+const areas = document.querySelectorAll('.answer-area');
+const progressDiv = document.getElementById('progress');
+areas.forEach(() => { let d = document.createElement('div'); d.className = 'progress-dot'; progressDiv.appendChild(d); });
+
+function updateProgress() {
+  const dots = progressDiv.querySelectorAll('.progress-dot');
+  areas.forEach((a, i) => { dots[i].className = a.value.trim().length > 3 ? 'progress-dot filled' : 'progress-dot'; });
+}
+areas.forEach(a => a.addEventListener('input', updateProgress));
+
+function autoSave() { let d = {}; areas.forEach(a => { d[a.getAttribute('data-id')] = a.value; }); localStorage.setItem('module05', JSON.stringify(d)); }
+function autoLoad() { let d = JSON.parse(localStorage.getItem('module05') || '{}'); areas.forEach(a => { let s = d[a.getAttribute('data-id')]; if (s) a.value = s; }); updateProgress(); }
+areas.forEach(a => a.addEventListener('input', autoSave));
+autoLoad();
+
+function exportAnswers() {
+  let r = { module: "Module 5 — Chi-Squared & ANOVA", timestamp: new Date().toISOString(), answers: {} };
+  areas.forEach(a => { let v = a.value.trim(); if (v) r.answers[a.getAttribute('data-id')] = v; });
+  let j = JSON.stringify(r, null, 2);
+  navigator.clipboard.writeText(j).then(() => {
+    document.getElementById('export-result').style.display = 'block';
+    document.getElementById('export-result').textContent = `Copied ${Object.keys(r.answers).length} answers! Paste to Claude with Cmd+V.`;
+  });
+}
+</script>
+
+</body>
+</html>
