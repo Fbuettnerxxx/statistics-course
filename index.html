@@ -40,6 +40,21 @@
 
   .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #aab7c4; font-weight: 700; margin: 28px 0 12px; padding-left: 4px; }
 
+  .download-all { display: flex; align-items: center; gap: 16px; text-decoration: none; color: white;
+    background: linear-gradient(135deg, #d35400, #e67e22); border-radius: 14px; padding: 18px 22px;
+    box-shadow: 0 4px 14px rgba(211,84,0,0.25); transition: transform 0.15s, box-shadow 0.15s; }
+  .download-all:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(211,84,0,0.35); }
+  .dl-icon { font-size: 26px; line-height: 1; flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px;
+    background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; }
+  .dl-text { display: flex; flex-direction: column; }
+  .dl-title { font-weight: 700; font-size: 15px; }
+  .dl-sub { font-size: 12px; opacity: 0.85; }
+
+  .exam-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .exam-links a { font-size: 12px; color: #b9660a; background: white; border: 1px solid #f0d5b8;
+    padding: 6px 12px; border-radius: 8px; text-decoration: none; transition: background 0.15s; }
+  .exam-links a:hover { background: #fff8f0; }
+
   .footer { text-align: center; margin-top: 40px; font-size: 12px; color: #aab7c4; }
   .footer a { color: #7f8c8d; }
 
@@ -153,6 +168,29 @@
     <span class="module-arrow">&rsaquo;</span>
   </a>
 
+</div>
+
+<div class="section-label">Übungsklausuren</div>
+
+<div class="intro" style="border-left: 4px solid #e67e22; background: #fff8f0;">
+  <strong style="color: #b9660a;">3 neue Mock-Klausuren im echten MA9712-Format</strong> — je 9 Aufgaben / 52 Punkte, mit Deckblatt, Cheat Sheet und komplett durchgerechneten Lösungen. Alle Themen: Study Design, Bayes, Chi-Quadrat, ANOVA, Regression, Logistische Regression.
+</div>
+
+<a class="download-all" href="exams/practice_exams.zip" download>
+  <span class="dl-icon">&#8681;</span>
+  <span class="dl-text">
+    <span class="dl-title">Alle Übungsklausuren herunterladen</span>
+    <span class="dl-sub">6 PDFs (Klausuren A/B/C + Lösungen) &bull; ZIP, ~640 KB</span>
+  </span>
+</a>
+
+<div class="exam-links">
+  <a href="exams/practice_exam_a.pdf" target="_blank">Klausur A</a>
+  <a href="exams/practice_exam_a_solutions.pdf" target="_blank">A — Lösungen</a>
+  <a href="exams/practice_exam_b.pdf" target="_blank">Klausur B</a>
+  <a href="exams/practice_exam_b_solutions.pdf" target="_blank">B — Lösungen</a>
+  <a href="exams/practice_exam_c.pdf" target="_blank">Klausur C</a>
+  <a href="exams/practice_exam_c_solutions.pdf" target="_blank">C — Lösungen</a>
 </div>
 
 <div class="footer">
