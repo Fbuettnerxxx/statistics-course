@@ -4,6 +4,18 @@ Interactive, self-paced learning modules for the TUM exam (CIT5130002 / MA9712).
 
 **Learn by doing, not by watching lectures.**
 
+## ⭐ New: 3 Practice Exams (with full solutions)
+
+Three brand-new mock exams in the real **MA9712 format** — each 9 problems / 52 credits, with title page, cheat sheet, and fully worked step-by-step solutions. Fresh scenarios covering every exam pillar: study design, Bayes, chi-squared, ANOVA, linear & logistic regression. All numerics independently verified against the solutions.
+
+**⬇ [Download all at once (ZIP, ~640 KB)](exams/practice_exams.zip)**
+
+| Exam | Questions | Solutions |
+|------|-----------|-----------|
+| Practice Exam A | [PDF](exams/practice_exam_a.pdf) | [PDF](exams/practice_exam_a_solutions.pdf) |
+| Practice Exam B | [PDF](exams/practice_exam_b.pdf) | [PDF](exams/practice_exam_b_solutions.pdf) |
+| Practice Exam C | [PDF](exams/practice_exam_c.pdf) | [PDF](exams/practice_exam_c_solutions.pdf) |
+
 ## How it works
 
 Each module has two parts:
